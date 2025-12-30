@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>microemulsiones – Proxecto AGROSOLVENTS</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-f245066ca199b7326ac6b360085ddf3a.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    </a>
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Proxecto AGROSOLVENTS</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../memoria_final.qmd"> 
+<span class="menu-text">Resumo Executivo</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-seccións" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Seccións</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-seccións">    
+        <li>
+    <a class="dropdown-item" href="../md/fames.html">
+ <span class="dropdown-text">Síntese de FAMEs</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../md/Predicion_propiedades_fisicas.html">
+ <span class="dropdown-text">Propiedades Físicas</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../md/microemulsiones.html">
+ <span class="dropdown-text">Microemulsións</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../reciclado.qmd">
+ <span class="dropdown-text">Reciclado</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#microemulsiones-de-ácidos-grasos" id="toc-microemulsiones-de-ácidos-grasos" class="nav-link active" data-scroll-target="#microemulsiones-de-ácidos-grasos"><span class="header-section-number">1</span> Microemulsiones de ácidos grasos</a>
+  <ul class="collapse">
+  <li><a href="#componentes-clave" id="toc-componentes-clave" class="nav-link" data-scroll-target="#componentes-clave"><span class="header-section-number">1.1</span> 1. Componentes clave</a></li>
+  <li><a href="#fase-oleosa-fame-y-derivados" id="toc-fase-oleosa-fame-y-derivados" class="nav-link" data-scroll-target="#fase-oleosa-fame-y-derivados"><span class="header-section-number">1.2</span> Fase oleosa (FAME y derivados)**</a></li>
+  <li><a href="#surfactantes-surfactantes" id="toc-surfactantes-surfactantes" class="nav-link" data-scroll-target="#surfactantes-surfactantes"><span class="header-section-number">1.3</span> Surfactantes (Surfactantes)**</a></li>
+  </ul></li>
+  <li><a href="#cotensioactivos" id="toc-cotensioactivos" class="nav-link" data-scroll-target="#cotensioactivos"><span class="header-section-number">2</span> Cotensioactivos</a>
+  <ul class="collapse">
+  <li><a href="#fase-acuosa-y-disolventes-verdes-alternativos" id="toc-fase-acuosa-y-disolventes-verdes-alternativos" class="nav-link" data-scroll-target="#fase-acuosa-y-disolventes-verdes-alternativos"><span class="header-section-number">2.1</span> Fase acuosa y disolventes verdes alternativos**</a></li>
+  </ul></li>
+  <li><a href="#aplicaciones-industriales" id="toc-aplicaciones-industriales" class="nav-link" data-scroll-target="#aplicaciones-industriales"><span class="header-section-number">3</span> Aplicaciones industriales</a>
+  <ul class="collapse">
+  <li><a href="#agricultura-y-agroquímica" id="toc-agricultura-y-agroquímica" class="nav-link" data-scroll-target="#agricultura-y-agroquímica"><span class="header-section-number">3.1</span> Agricultura y Agroquímica**</a></li>
+  <li><a href="#detergente-y-limpieza" id="toc-detergente-y-limpieza" class="nav-link" data-scroll-target="#detergente-y-limpieza"><span class="header-section-number">3.2</span> Detergente y Limpieza**</a></li>
+  <li><a href="#industria-textil" id="toc-industria-textil" class="nav-link" data-scroll-target="#industria-textil"><span class="header-section-number">3.3</span> Industria Textil**</a></li>
+  <li><a href="#lubricantes-y-fluidos-hidráulicos" id="toc-lubricantes-y-fluidos-hidráulicos" class="nav-link" data-scroll-target="#lubricantes-y-fluidos-hidráulicos"><span class="header-section-number">3.4</span> Lubricantes y fluidos hidráulicos**</a></li>
+  <li><a href="#productos-farmacéuticos-y-cosméticos" id="toc-productos-farmacéuticos-y-cosméticos" class="nav-link" data-scroll-target="#productos-farmacéuticos-y-cosméticos"><span class="header-section-number">3.5</span> Productos farmacéuticos y cosméticos**</a></li>
+  <li><a href="#recuperación-mejorada-de-petróleo-eor" id="toc-recuperación-mejorada-de-petróleo-eor" class="nav-link" data-scroll-target="#recuperación-mejorada-de-petróleo-eor"><span class="header-section-number">3.6</span> Recuperación mejorada de petróleo (EOR)**</a></li>
+  <li><a href="#síntesis-de-nanomateriales" id="toc-síntesis-de-nanomateriales" class="nav-link" data-scroll-target="#síntesis-de-nanomateriales"><span class="header-section-number">3.7</span> Síntesis de Nanomateriales**</a></li>
+  </ul></li>
+  <li><a href="#fundamento-teórico" id="toc-fundamento-teórico" class="nav-link" data-scroll-target="#fundamento-teórico"><span class="header-section-number">4</span> Fundamento teórico</a>
+  <ul class="collapse">
+  <li><a href="#estructura-de-las-mcrosmulsiones" id="toc-estructura-de-las-mcrosmulsiones" class="nav-link" data-scroll-target="#estructura-de-las-mcrosmulsiones"><span class="header-section-number">4.1</span> Estructura de las mcrosmulsiones</a></li>
+  </ul></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="microemulsiones.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+
+
+
+
+<p>Estos documentos detallan el desarrollo de <strong>solventes industriales verdes</strong> y <strong>microemulsiones sostenibles</strong> para reemplazar los derivados del petróleo. La principal iniciativa, el proyecto <strong>AGROSOLVENTES</strong>, busca formular productos a base de <strong>aceites vegetales</strong> (como girasol o palma) y <strong>ésteres dibásicos</strong> para reducir la toxicidad y las emisiones de compuestos orgánicos volátiles. Las fuentes analizan los beneficios ambientales y sociales de esta <strong>química verde</strong>, destacando la mejora en la seguridad laboral y la biodegradabilidad. También se exploran alternativas como el disolvente <strong>Cireno</strong>, obtenido a partir de biomasa, y el uso de tecnologías de <strong>simulación computacional</strong> para predecir el comportamiento de estas mezclas. En conjunto, la información describe una transición industrial hacia modelos de <strong>economía circular</strong> más respetuosos con el medio ambiente, ofreciendo soluciones de alto rendimiento para sectores como la automoción o las pinturas.</p>
+<section id="microemulsiones-de-ácidos-grasos" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="microemulsiones-de-ácidos-grasos"><span class="header-section-number">1</span> Microemulsiones de ácidos grasos</h2>
+<p>Las microemulsiones de ésteres metílicos de ácidos grasos (FAME) son sistemas termodinámicamente estables, isotrópicos y transparentes que se forman espontáneamente mediante la combinación precisa de componentes específicos. Estos sistemas destacan por su capacidad para solubilizar sustancias tanto polares como apolares y por su baja viscosidad.</p>
+<p>Estos son sus componentes clave y aplicaciones industriales según las fuentes proporcionadas:</p>
+<section id="componentes-clave" class="level3" data-number="1.1">
+<h3 data-number="1.1" class="anchored" data-anchor-id="componentes-clave"><span class="header-section-number">1.1</span> 1. Componentes clave</h3>
+<p>La formulación de estas microemulsiones requiere un delicado equilibrio, a menudo analizado a través de modelos teóricos como la Diferencia Hidrofílica-Lipófila (HLD) y la Curvatura Neta Promedio (NAC) para predecir el comportamiento de la interfaz.</p>
+</section>
+<section id="fase-oleosa-fame-y-derivados" class="level3" data-number="1.2">
+<h3 data-number="1.2" class="anchored" data-anchor-id="fase-oleosa-fame-y-derivados"><span class="header-section-number">1.2</span> Fase oleosa (FAME y derivados)**</h3>
+<p>El componente principal es el éster metílico de ácido graso, que actúa como fase continua o dispersa según el tipo de microemulsión (agua en aceite o aceite en agua). - Origen y Tipo: Se utilizan ésteres de ácidos grasos C12-22, derivados de fuentes naturales como el aceite de palma, sebo, girasol o soja. - Ejemplos específicos:** Se mencionan los ésteres metílicos de los ácidos láurico, mirístico, palmítico, esteárico y oleico. - Modificaciones: Para aplicaciones de alto rendimiento, como fluidos hidráulicos, los FAME (como el oleato de metilo) se pueden convertir mediante metátesis en ésteres dibásicos (DBE), que ofrecen una mejor estabilidad térmica y fluidez a baja temperatura en comparación con los FAME simples.</p>
+</section>
+<section id="surfactantes-surfactantes" class="level3" data-number="1.3">
+<h3 data-number="1.3" class="anchored" data-anchor-id="surfactantes-surfactantes"><span class="header-section-number">1.3</span> Surfactantes (Surfactantes)**</h3>
+<p>La elección del surfactante es fundamental para reducir la tensión interfacial y estabilizar el sistema.</p>
+<ul>
+<li>No iónicos: Son muy utilizados por su baja toxicidad y tolerancia cutánea. Destacan los alcoholes etoxilados/propoxilados (como Dehydol® LS 2 o Imbentin), ésteres de sorbitán (como Tweens/Polisorbatos 20, 40, 60, 80) y polímeros en bloque como los poloxámeros (Kolliphor® P 188). Sin embargo, los tensioactivos no iónicos pueden ser sensibles a la temperatura, deshidratarse cuando se calientan y alterar el equilibrio de la emulsión.</li>
+<li>Aniónicos: Se utilizan para conferir estabilidad iónica, aunque pueden ser sensibles a la salinidad. Los ejemplos clave incluyen sales de ésteres de ácido sulfosuccínico (como dioctilsulfosuccinato de sodio) y lauril éter sulfato de sodio (SLES).</li>
+<li>De base biológica:** Existen opciones más ecológicas como la lecitina y los derivados del azúcar.</li>
+</ul>
+</section>
+</section>
+<section id="cotensioactivos" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="cotensioactivos"><span class="header-section-number">2</span> Cotensioactivos</h2>
+<p>Generalmente se necesita un cotensioactivo para aumentar la flexibilidad de la película interfacial y ajustar la curvatura espontánea de la microemulsión.</p>
+<ul>
+<li>Alcoholes de cadena corta: Estos son los más comunes, incluidos el etanol, el isopropanol (2-propanol), el 1-butanol y el 1-propanol. El 1-butanol suele ser muy eficaz para expandir la región de la microemulsión en el diagrama de fases debido a su equilibrio hidrofílico-lipofílico.</li>
+<li>Dioles: El 1,2-hexanodiol y otros dioles también se utilizan como cotensioactivos no tóxicos para mejorar la estabilidad.</li>
+</ul>
+<section id="fase-acuosa-y-disolventes-verdes-alternativos" class="level3" data-number="2.1">
+<h3 data-number="2.1" class="anchored" data-anchor-id="fase-acuosa-y-disolventes-verdes-alternativos"><span class="header-section-number">2.1</span> Fase acuosa y disolventes verdes alternativos**</h3>
+<p>La fase acuosa puede contener sales (como NaCl) para ajustar la fuerza iónica. En formulaciones sostenibles modernas, se está investigando la sustitución de disolventes tóxicos convencionales (como DMSO o NMP) por alternativas ecológicas como <strong>Cyrene™</strong> (dihidrolevoglucosenona). El cireno, derivado de la celulosa, tiene propiedades de solvatación similares a los disolventes dipolares apróticos pero con menor toxicidad, siendo útil en la síntesis orgánica y la preparación de nanopartículas dentro de sistemas de microemulsión.</p>
+</section>
+</section>
+<section id="aplicaciones-industriales" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="aplicaciones-industriales"><span class="header-section-number">3</span> Aplicaciones industriales</h2>
+<p>Las microemulsiones a base de FAME y sus derivados tienen un amplio espectro de uso debido a su capacidad de solubilización y naturaleza biodegradable.</p>
+<section id="agricultura-y-agroquímica" class="level3" data-number="3.1">
+<h3 data-number="3.1" class="anchored" data-anchor-id="agricultura-y-agroquímica"><span class="header-section-number">3.1</span> Agricultura y Agroquímica**</h3>
+<ul>
+<li>Insecticidas y pesticidas: Las microemulsiones de aceite de palma (PME) se utilizan como vehículos para insecticidas (por ejemplo, contra los mosquitos <em>Aedes</em>), reemplazando los solventes a base de petróleo. El tamaño pequeño (nanométrico) de las gotas permite una mejor penetración a través del abdomen del insecto.</li>
+<li>Portadores de ingredientes activos: Sirven como portadores de herbicidas, acaricidas y nematicidas.</li>
+</ul>
+</section>
+<section id="detergente-y-limpieza" class="level3" data-number="3.2">
+<h3 data-number="3.2" class="anchored" data-anchor-id="detergente-y-limpieza"><span class="header-section-number">3.2</span> Detergente y Limpieza**</h3>
+<ul>
+<li>Limpiadores multiusos: Las microemulsiones FAME han demostrado un rendimiento de limpieza superior en superficies duras, eliminando la suciedad tanto polar como no polar debido a su doble capacidad de solubilización.</li>
+</ul>
+</section>
+<section id="industria-textil" class="level3" data-number="3.3">
+<h3 data-number="3.3" class="anchored" data-anchor-id="industria-textil"><span class="header-section-number">3.3</span> Industria Textil**</h3>
+<ul>
+<li>Lubricantes para fibras: Se utilizan como agentes deslizantes o suavizantes (suavizantes) en el tratamiento de las fibras, por ejemplo como aceites para peinar la lana.</li>
+</ul>
+</section>
+<section id="lubricantes-y-fluidos-hidráulicos" class="level3" data-number="3.4">
+<h3 data-number="3.4" class="anchored" data-anchor-id="lubricantes-y-fluidos-hidráulicos"><span class="header-section-number">3.4</span> Lubricantes y fluidos hidráulicos**</h3>
+<ul>
+<li>Fluidos de alto rendimiento: La conversión de FAME en ésteres dibásicos (DBE) por metátesis permite la creación de bases lubricantes 100 % de origen biológico que cumplen con los grados de viscosidad estándar (VG32, VG46). Estos fluidos tienen una excelente fluidez a bajas temperaturas y resistencia a la oxidación, lo que los hace ideales para maquinaria pesada.</li>
+</ul>
+</section>
+<section id="productos-farmacéuticos-y-cosméticos" class="level3" data-number="3.5">
+<h3 data-number="3.5" class="anchored" data-anchor-id="productos-farmacéuticos-y-cosméticos"><span class="header-section-number">3.5</span> Productos farmacéuticos y cosméticos**</h3>
+<ul>
+<li>Administración de medicamentos:** Las microemulsiones mejoran la biodisponibilidad de medicamentos poco solubles en agua (como diclofenaco sódico o isotretinoína) y actúan como potenciadores de la permeación para la administración tópica y transdérmica.</li>
+<li>Cuidado personal:** Se utilizan en formulaciones cosméticas por su capacidad de proporcionar extractos naturales (ej. <em>Dendrobium</em>) con propiedades antienvejecimiento, ofreciendo una buena retención en la piel.</li>
+</ul>
+</section>
+<section id="recuperación-mejorada-de-petróleo-eor" class="level3" data-number="3.6">
+<h3 data-number="3.6" class="anchored" data-anchor-id="recuperación-mejorada-de-petróleo-eor"><span class="header-section-number">3.6</span> Recuperación mejorada de petróleo (EOR)**</h3>
+<ul>
+<li>Aunque no son exclusivas de los FAME, las microemulsiones se utilizan para lograr tensiones interfaciales ultrabajas que permiten movilizar el petróleo atrapado en los poros de la roca.</li>
+</ul>
+</section>
+<section id="síntesis-de-nanomateriales" class="level3" data-number="3.7">
+<h3 data-number="3.7" class="anchored" data-anchor-id="síntesis-de-nanomateriales"><span class="header-section-number">3.7</span> Síntesis de Nanomateriales**</h3>
+<ul>
+<li>Actúan como microrreactores para la síntesis controlada de nanopartículas orgánicas e inorgánicas, aprovechando el confinamiento de los reactivos dentro de las pequeñas gotas de la microemulsión.</li>
+</ul>
+</section>
+</section>
+<section id="fundamento-teórico" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="fundamento-teórico"><span class="header-section-number">4</span> Fundamento teórico</h2>
+<p>La estabilidad de las microemulsiones se debe principalmente a que son sistemas termodinámicamente estables, a diferencia de las macroemulsiones (o emulsiones convencionales), que sólo son cinéticamente estables y eventualmente se separarían con el tiempo. Esta estabilidad se produce espontáneamente cuando se mezclan los componentes adecuados en las proporciones adecuadas.</p>
+<p>Los factores fundamentales que contribuyen a esta estabilidad son:</p>
+<ol type="1">
+<li><strong>Tensión interfacial ultrabaja</strong>: Para formar la enorme área interfacial requerida por las nanogotitas de una microemulsión, es necesario reducir drásticamente la tensión interfacial entre el aceite y el agua.</li>
+<li><strong>Papel de los tensioactivos y co-tensioactivos</strong>: Los tensioactivos reducen la tensión interfacial, pero a menudo no es suficiente por sí solo para formar microemulsiones. Se añade un cotensioactivo (normalmente un alcohol de cadena corta) que se mezcla y se adsorbe con el tensioactivo en la interfaz.</li>
+<li><strong>Teoría de la tensión negativa transitoria</strong>: Esta teoría sugiere que la combinación de surfactantes y co-surfactantes reduce la tensión interfacial a valores extremadamente bajos (10<sup>-3</sup> - 0<sup>-5</sup> mN/m) o incluso a valores transitorios negativos. Esto provoca una expansión espontánea de la interfaz hasta que el voltaje vuelve a un valor mínimo positivo, estabilizando el sistema.</li>
+<li><strong>Compensación entrópica</strong>: La formación de microemulsiones se explica por el balance de energía libre. Dado que la tensión interfacial (γ) es ultrabaja, el coste energético de crear una nueva superficie es muy pequeño. Este pequeño coste energético se compensa con el aumento de entropía (desorden) del sistema, que proviene de la dispersión de un gran número de pequeñas gotas en fase continua (entropía de mezcla). En resumen, la ganancia entrópica excede el costo energético de la formación de la superficie.</li>
+<li><strong>Flexibilidad y curvatura de la película interfacial</strong>: La estabilidad también depende de la capacidad de la capa de surfactante para adoptar la curvatura apropiada alrededor de las gotas (ya sea aceite en agua, agua en aceite o bicontinua).</li>
+<li>Teoría de la doble capa: Propone que la película interfacial es flexible y se dobla espontáneamente debido a diferentes relaciones de concentración e interacciones moleculares.</li>
+<li><strong>Parámetro de empaquetamiento (P)</strong>: La estabilidad y el tipo de microemulsión (esférica, cilíndrica, laminar) dependen de la geometría de las moléculas del surfactante. Si el volumen de la cola hidrofóbica es mayor que el área de la cabeza polar (P&gt;1), la interfaz se doblará hacia el agua (formando agua en aceite); si es menor (P&lt;1), se curva hacia el aceite.</li>
+<li><strong>Flexibilidad</strong>: La presencia de co-surfactantes, como 1-propanol, interactúa con la monocapa de surfactante para aumentar la flexibilidad de la película interfacial, lo cual es crucial para la estabilidad.</li>
+<li><strong>Interacciones electrostáticas (en sistemas iónicos)</strong>: Para las microemulsiones con tensioactivos iónicos, la estabilidad también está regida por fenómenos electroquímicos. Las teorías de Debye-Huckel y Gouy-Chapman explican cómo la distribución de iones y el potencial eléctrico en la interfaz (doble capa eléctrica) afectan las interacciones repulsivas entre las gotas, impidiendo su coalescencia. La fuerza iónica y el blindaje de carga son clave para mantener esta estructura.</li>
+</ol>
+<section id="estructura-de-las-mcrosmulsiones" class="level3" data-number="4.1">
+<h3 data-number="4.1" class="anchored" data-anchor-id="estructura-de-las-mcrosmulsiones"><span class="header-section-number">4.1</span> Estructura de las mcrosmulsiones</h3>
+<p>Las microemulsiones presentan una rica variedad de microestructuras, a pesar de ser macroscópicamente homogéneas y transparentes. Sus tipos estructurales se pueden clasificar según la organización de las fases (agua y aceite) y la curvatura de la interfaz tensioactiva. Estos son los principales tipos estructurales según las fuentes: 1. Clasificación de Winsor (Fases Macroscópicas) Tradicionalmente, las microemulsiones se clasifican en cuatro tipos según su equilibrio de fases: • Winsor I (O/W): Microemulsión de aceite en agua en equilibrio con un exceso de fase oleosa. • Winsor II (W/O): Microemulsión de agua en aceite en equilibrio con un exceso de fase acuosa. • Winsor III (Trifásico Bicontinuo): Una fase media de microemulsión bicontinua en equilibrio con fases en exceso de agua y aceite. • Winsor IV (Monofásico): Una sola fase macroscópica que contiene todo el aceite, agua y surfactante, que puede adoptar cualquiera de las microestructuras internas que se describen a continuación. 2. Microestructuras internas A nivel microscópico, las microemulsiones se organizan según la curvatura de la película interfacial: • Gotitas (micelas): ◦ Aceite en agua (O/W o L1): Gotas de aceite dispersas en una fase continua de agua. Ocurren cuando la interfaz está curvada hacia el aceite (curvatura positiva) y el parámetro de empaquetamiento (P) está entre 1/3 y 1. Si la cantidad de aceite es pequeña, se denominan micelas directas o “hinchadas”. ◦ Agua en aceite (W/O o L2): Gotas de agua dispersas en una fase continua de aceite, también llamadas micelas inversas. Ocurren cuando la interfaz está curvada hacia el agua (curvatura negativa) y el parámetro de empaquetamiento es mayor que 1 (P&gt;1). • Estructuras cilíndricas y parecidas a gusanos (“parecidas a gusanos”): ◦ Las micelas esféricas pueden alargarse para formar cilindros. ◦ Estos cilindros cuando crecen mucho se vuelven flexibles y se comportan como polímeros, denominándose micelas vermiformes o “polímeros vivos”. Estas estructuras pueden enredarse y formar redes transitorias. ◦ En ciertos casos, estas micelas cilíndricas pueden ramificarse y formar “redes vivas” (redes vivas), que actúan como la contraparte micelar de las redes poliméricas reticuladas. • Estructuras Bicontinuas: ◦ En estas estructuras, tanto la fase acuosa como la oleosa forman dominios continuos y entrelazados, separados por una monocapa de tensioactivo. ◦ Suelen formarse cuando la curvatura espontánea de la interfaz es cercana a cero o cuando el parámetro de empaquetamiento es cercano a 1 (P≈1), permitiendo una interfaz flexible y fluctuante. Estas estructuras tienen un área interfacial enorme en comparación con las microemulsiones desconectadas. • Fase “Esponja” (Fase Esponja o L3): ◦ Aunque es similar a las estructuras bicontinuas, la fase de esponja está formada por bicapas de surfactante (en lugar de monocapas) que separan dos dominios del mismo disolvente (p.&nbsp;ej., dos dominios de agua separados por una bicapa hinchada por aceite). Se considera una estructura “tricontinua”. • Vesículas y Fases Lamelares: ◦ En el agua, los tensioactivos pueden formar vesículas o bicapas de cristal líquido. Si la región de la cola del tensioactivo se hincha con aceite, la bicapa se transforma en dos monocapas separadas por aceite, dando lugar posiblemente a estructuras laminares. ¿Qué tres estructuras forman los tensioactivos en el agua? ### Estructura de las microsmulsiones</p>
+<p>Según las fuentes, los tensioactivos en el agua se autoensamblan en diferentes estructuras dependiendo de su geometría molecular, que se cuantifica mediante el “parámetro crítico de empaquetamiento” (R o CPP). Las tres estructuras principales son: 1. Micelas esféricas: Esta es la estructura normal que se forma cuando el parámetro de empaquetamiento (R) es menor a 1/3. 2. Micelas cilíndricas: Cuando el parámetro de empaquetamiento está en un rango entre 1/3 y 1/2 se forma una mesofase de cilindros. Estas micelas pueden alargarse significativamente y comportarse como polímeros flexibles (micelas parecidas a gusanos). 3. Estructuras laminares (o bicapas): Si el parámetro de empaquetamiento está entre 1/2 y 1, los tensioactivos forman estructuras laminares o bicapas planas. Este grupo también incluye vesículas y fases de cristales líquidos basadas en bicapas localmente planas.</p>
+<p>import numpy as np</p>
+<p>import matplotlib.pyplot as plt</p>
+<p># ———- Parámetros do exemplo ———-</p>
+<p>T = 25.0 # ºC</p>
+<p>sigma = 0.01 # 1/ºC (aniónico)</p>
+<p>k = 0.17 # coeficiente EACN</p>
+<p>Cc_SDS = -2.6 # constante de caracterización do SDS</p>
+<p># Aceites da mestura</p>
+<p>EACN_octano = 8</p>
+<p>EACN_tetradecano = 14</p>
+<p># Salinidade de referencia</p>
+<p>S_ref = 5.0 # % peso NaCl</p>
+<p># ———- Funcións ———-</p>
+<p>def HLD_anionico(T, EACN, S, Cc=Cc_SDS, k=k, sigma=sigma, Tref=25.0):</p>
+<p>“““HLD para tensioactivos aniónicos.</p>
+<p>S en % peso (&gt;= ~0.1 para evitar log(0)).</p>
+<p>““”</p>
+<p>return sigma * (T - Tref) - k * EACN + np.log(S) + Cc</p>
+<p>def EACN_mestura(x_oct, E1=EACN_octano, E2=EACN_tetradecano):</p>
+<p>“““EACN da mestura: x_oct é a fracción (0..1) de octano.”“”</p>
+<p>return x_oct * E1 + (1 - x_oct) * E2</p>
+<p># ———- Cálculos base ———-</p>
+<p>EACN_mix_5050 = EACN_mestura(0.5)</p>
+<p># 1) HLD vs Salinidade para a mestura 50/50</p>
+<p>S_vals = np.logspace(-1, np.log10(30), 300) # 0.1% a 30%</p>
+<p>HLD_vs_S = HLD_anionico(T, EACN_mix_5050, S_vals)</p>
+<p># Salinidade S* necesaria para HLD=0 (se fose alcanzable)</p>
+<p>S_star = np.exp(k * EACN_mix_5050 - sigma * (T - 25) - Cc_SDS)</p>
+<p># 2) HLD vs EACN para S = 5%</p>
+<p>EACN_vals = np.linspace(0, 20, 300)</p>
+<p>HLD_vs_EACN = HLD_anionico(T, EACN_vals, S_ref)</p>
+<p># Segmento alcanzable coa mestura (8..14)</p>
+<p>mask_segmento = (EACN_vals &gt;= EACN_octano) &amp; (EACN_vals &lt;= EACN_tetradecano)</p>
+<p># 3) Radio de gota (NAC simplificado) vs Salinidade</p>
+<p># H0 = HLD / L, R = 1/|H0| = L/|HLD|. Collemos L = 2 nm (20 Å)</p>
+<p>L_nm = 2.0</p>
+<p># Evitar división por cero creando unha máscara</p>
+<p>HLD_safe = HLD_vs_S.copy()</p>
+<p>HLD_safe[np.isclose(HLD_safe, 0, atol=1e-6)] = np.nan</p>
+<p>R_nm = L_nm / np.abs(HLD_safe)</p>
+<p># Cortamos para representar (máx 50 nm) para visualizar mellor</p>
+<p>R_nm_clipped = np.clip(R_nm, 0, 50)</p>
+<p># ———- Gráficos ———-</p>
+<p>plt.style.use(‘seaborn-v0_8-whitegrid’)</p>
+<p># Figura 1: HLD vs Salinidade</p>
+<p>fig1, ax1 = plt.subplots(figsize=(8, 5))</p>
+<p>ax1.semilogx(S_vals, HLD_vs_S, color=‘#0066CC’, lw=2, label=f’EACN_mestura= {EACN_mix_5050:.1f}’)</p>
+<p>ax1.axhline(0, color=‘k’, lw=1, ls=‘–’, label=‘HLD = 0’)</p>
+<p># Marca S*</p>
+<p>ax1.axvline(S_star, color=‘#CC3300’, lw=1.5, ls=‘–’, label=f’S* (HLD=0) ≈ {S_star:.1f}%’)</p>
+<p>ax1.set_xlabel(‘Salinidade S (% peso NaCl)’, fontsize=11)</p>
+<p>ax1.set_ylabel(‘HLD’, fontsize=11)</p>
+<p>ax1.set_title(‘HLD vs Salinidade (mestura 50/50 octano+tetradecano)’, fontsize=12)</p>
+<p>ax1.legend()</p>
+<p>fig1.tight_layout()</p>
+<p>fig1.savefig(‘grafico_1_HLD_vs_S.png’, dpi=150)</p>
+<p># Figura 2: HLD vs EACN a S=5%</p>
+<p>fig2, ax2 = plt.subplots(figsize=(8, 5))</p>
+<p>ax2.plot(EACN_vals, HLD_vs_EACN, color=‘#009966’, lw=2, label=‘S = 5%’)</p>
+<p>ax2.axhline(0, color=‘k’, lw=1, ls=‘–’, label=‘HLD = 0’)</p>
+<p># Resaltar segmento de mestura posible (8..14)</p>
+<p>ax2.plot(EACN_vals[mask_segmento], HLD_vs_EACN[mask_segmento], color=‘#FF8800’, lw=5, alpha=0.6,</p>
+<p>label=‘Rango EACN alcanzable pola mestura (8–14)’)</p>
+<p>ax2.set_xlabel(‘EACN do aceite (ou mestura)’, fontsize=11)</p>
+<p>ax2.set_ylabel(‘HLD’, fontsize=11)</p>
+<p>ax2.set_title(‘HLD vs EACN a salinidade fixa (S = 5%)’, fontsize=12)</p>
+<p>ax2.legend()</p>
+<p>fig2.tight_layout()</p>
+<p>fig2.savefig(‘grafico_2_HLD_vs_EACN.png’, dpi=150)</p>
+<p># Figura 3: Radio NAC vs Salinidade</p>
+<p>fig3, ax3 = plt.subplots(figsize=(8, 5))</p>
+<p>ax3.semilogx(S_vals, R_nm_clipped, color=‘#8844AA’, lw=2)</p>
+<p>ax3.set_xlabel(‘Salinidade S (% peso NaCl)’, fontsize=11)</p>
+<p>ax3.set_ylabel(‘Radio de gota R (nm) — NAC simplificado’, fontsize=11)</p>
+<p>ax3.set_title(‘Estimación NAC do tamaño de gota vs salinidade (L = 2 nm)’, fontsize=12)</p>
+<p># Anotar que se “divirxe” cando HLD→0</p>
+<p>ax3.text(0.12, 45, ‘R → ∞ cando HLD → 0\n(cerca de S*)’, fontsize=10, color=‘#444444’)</p>
+<p>fig3.tight_layout()</p>
+<p>fig3.savefig(‘grafico_3_R_vs_S.png’, dpi=150)</p>
+<p>print(‘EACN_mix_5050 =’, EACN_mix_5050)</p>
+<p>print(‘S* (HLD=0) ≈’, S_star)</p>
+<p>print(‘Ficheiros xerados:’, ‘grafico_1_HLD_vs_S.png’, ‘grafico_2_HLD_vs_EACN.png’, ‘grafico_3_R_vs_S.png’)</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

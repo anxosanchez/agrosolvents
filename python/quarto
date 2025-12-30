@@ -1,0 +1,51 @@
+---
+title: "Predictor de Propiedades de Microemulsiones"
+---
+
+UNIFAC (UNIQUAC Functional-group Activity Coficients) fue diseñado específicamente para calcular coeficientes de actividad (equilibrio líquido-vapor). Para propiedades físicas puras como densidad o viscosidad, a menudo se utilizan métodos hermanos como **Joback/Reid** o **Marrero-Pardillo**. 
+
+Así es como puede abordar su código Python y las herramientas disponibles.
+
+## Estructura del planteamiento
+
+Para predecir estas propiedades, el flujo de trabajo suele ser: 
+1. Representación de la molécula: utilizar códigos SMILES (por ejemplo, CCO para etanol). 
+2. Fragmentación: dividir la molécula en sus grupos funcionales (ej: $-\text{CH}_3$, $-\text{CH}_2-$, $-\text{OH}$).
+3. Cálculo: aplicar las ecuaciones de contribución. La fórmula general suele tener esta forma:
+  
+$$
+P = \sum_i n_i \cdot C_i + K
+$$
+  
+Donde $P$ es la propiedad, $n_i$ el número de grupos de tipo $i$ y $C_i$ la contribución tabulada de ese grupo.
+
+## Bibliotecas Python recomendadas 
+
+No es necesario programar tablas de grupos desde cero. Hay bibliotecas muy maduras para esto:
+1. Thermo (La más completa) es probablemente la mejor librería para lo que buscas. Incluye implementaciones de Joback, Constantinou & Gani y otros métodos que calculan exactamente lo que usted pide.
+2. Instalación: pip install thermo
+3. Capacidad: Densidad, $T_c$, $P_c$, viscosidad, tensión superficial y parámetros de Hansen.B. 
+4. RDKit + Cantera / DWSIMSi trabajas con quimioinformática, RDKit ayuda a identificar grupos funcionales a partir de SMILES, que luego puedes pasar a algoritmos de cálculo.
+5. Algoritmo de ejemplo (Python) A continuación se muestra un resumen de cómo usaría thermo para obtener estas propiedades rápidamente:
+
+```{python}
+from thermo import Chemical
+
+# Creamos o obxecto da substancia (por exemplo, Isopropanol)
+substancia = Chemical('isopropanol')
+
+# 1. Densidade (a 298K)
+print(f"Densidade: {substancia.rho} kg/m3")
+
+# 2. Viscosidade líquida
+print(f"Viscosidade: {substancia.mul} Pa·s")
+
+# 3. Tensión superficial
+print(f"Tensión superficial: {substancia.sigma} N/m")
+
+# 4. Parámetros de Hansen (HSP)
+# Nota: Moitas veces veñen como (delta_d, delta_p, delta_h)
+print(f"Parámetros de Hansen: {substancia.Hansen}")
+
+```
+

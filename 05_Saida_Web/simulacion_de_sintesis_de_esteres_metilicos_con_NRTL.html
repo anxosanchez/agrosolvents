@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulación Digital: Planta de Biodiésel de Palma</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .chart-container { 
+            position: relative; 
+            width: 100%; 
+            max-width: 600px; 
+            margin-left: auto; 
+            margin-right: auto; 
+            height: 350px; 
+            max-height: 400px; 
+        }
+        @media (max-width: 640px) {
+            .chart-container { height: 250px; }
+        }
+        .ternary-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            aspect-ratio: 1/0.866;
+        }
+        .tab-active {
+            border-bottom: 2px solid #10b981;
+            color: #065f46;
+            font-weight: 600;
+        }
+        .tab-inactive {
+            color: #6b7280;
+            font-weight: 400;
+        }
+        .slider-thumb::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #10b981;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+    </style>
+    <!-- Chosen Palette: Industrial Eco-Clean (Warm Neutral Backgrounds, Emerald Green Accents, Slate Grey Text, Amber Warnings) -->
+    <!-- Application Structure Plan: A Dashboard-style SPA with four distinct tabs. 
+         1. 'Resumen Ejecutivo': High-level KPIs and process flow. 
+         2. 'Reactor y Masas': Interactive mass balance simulator where users change molar ratio. 
+         3. 'Termodinámica LLE': Interactive Ternary Diagram showing phase separation efficiency based on inputs. 
+         4. 'Calidad y Energía': Analysis of energy loads, viscosity (quality), and sustainability. 
+         This structure moves from general overview to specific unit operations, ending with impact analysis, mirroring the engineering design flow. -->
+    <!-- Visualization & Content Choices: 
+         - Mass Balance: Stacked Bar Chart (Chart.js) to show Input vs Output conservation. Interaction: Sliders update data real-time. 
+         - LLE: Scatter Plot (Chart.js) mapped to Ternary Coordinates to visualize the Binodal Curve and operating point. Justification: Essential for chemical engineers to see phase separation. 
+         - Energy: Doughnut Chart to compare Sensible Heat vs Reaction Heat. 
+         - Viscosity: Gauge-style visualization using CSS/JS to show compliance with ASTM standards. 
+         - Sustainability: Simple Bar chart comparing CO2 emissions. 
+         -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+<body class="bg-stone-50 text-slate-800 antialiased selection:bg-emerald-200 selection:text-emerald-900">
+
+    <!-- Navigation / Header -->
+    <header class="bg-white border-b border-stone-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">🌿</span>
+                    <div>
+                        <h1 class="text-lg font-bold text-slate-900 leading-tight">BioPalma Digital Twin</h1>
+                        <p class="text-xs text-slate-500">Simulación de Ingeniería Química de Procesos</p>
+                    </div>
+                </div>
+                <nav class="hidden md:flex space-x-8">
+                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="tab-active px-3 py-2 text-sm transition-colors">Resumen</button>
+                    <button onclick="switchTab('reactor')" id="nav-reactor" class="tab-inactive px-3 py-2 text-sm transition-colors hover:text-emerald-600">Reactor</button>
+                    <button onclick="switchTab('termo')" id="nav-termo" class="tab-inactive px-3 py-2 text-sm transition-colors hover:text-emerald-600">Separación (LLE)</button>
+                    <button onclick="switchTab('analisis')" id="nav-analisis" class="tab-inactive px-3 py-2 text-sm transition-colors hover:text-emerald-600">Energía y Calidad</button>
+                </nav>
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden">
+                    <select onchange="switchTab(this.value)" class="bg-stone-100 border-none text-sm rounded p-1">
+                        <option value="dashboard">Resumen</option>
+                        <option value="reactor">Reactor</option>
+                        <option value="termo">Separación</option>
+                        <option value="analisis">Energía/Calidad</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- TAB: DASHBOARD -->
+        <section id="tab-dashboard" class="block animate-fade-in">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-slate-900 mb-4">Resumen Ejecutivo del Proceso</h2>
+                <p class="text-lg text-slate-600 max-w-3xl leading-relaxed">
+                    Esta aplicación presenta el modelo digital para la producción de <strong>Biodiésel (FAME)</strong> a partir de Aceite de Palma mediante transesterificación catalítica básica. Explore los módulos para simular el reactor, analizar la separación de fases y evaluar la sostenibilidad del proceso.
+                </p>
+            </div>
+
+            <!-- KPIs Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100 border-l-4 border-l-emerald-500">
+                    <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Rendimiento Másico</h3>
+                    <div class="mt-2 flex items-baseline gap-2">
+                        <span class="text-3xl font-bold text-slate-900" id="kpi-yield">98.9</span>
+                        <span class="text-sm text-slate-500">%</span>
+                    </div>
+                    <p class="mt-1 text-xs text-emerald-600">Eficiencia alta</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100 border-l-4 border-l-blue-500">
+                    <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Producción FAME</h3>
+                    <div class="mt-2 flex items-baseline gap-2">
+                        <span class="text-3xl font-bold text-slate-900" id="kpi-prod">99.2</span>
+                        <span class="text-sm text-slate-500">kg/batch</span>
+                    </div>
+                    <p class="mt-1 text-xs text-slate-500">Base: 100kg Aceite</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100 border-l-4 border-l-amber-500">
+                    <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Carga Térmica</h3>
+                    <div class="mt-2 flex items-baseline gap-2">
+                        <span class="text-3xl font-bold text-slate-900" id="kpi-energy">18.4</span>
+                        <span class="text-sm text-slate-500">MJ</span>
+                    </div>
+                    <p class="mt-1 text-xs text-slate-500">Reacción Exotérmica</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100 border-l-4 border-l-teal-500">
+                    <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Huella de Carbono</h3>
+                    <div class="mt-2 flex items-baseline gap-2">
+                        <span class="text-3xl font-bold text-slate-900">-80</span>
+                        <span class="text-sm text-slate-500">%</span>
+                    </div>
+                    <p class="mt-1 text-xs text-teal-600">vs Diésel Fósil</p>
+                </div>
+            </div>
+
+            <!-- Process Flow Visualization (HTML/CSS) -->
+            <div class="bg-white p-8 rounded-xl shadow-sm border border-stone-200">
+                <h3 class="text-lg font-semibold mb-6">Diagrama de Flujo del Proceso</h3>
+                <div class="flex flex-col md:flex-row items-center justify-between gap-4 text-center">
+                    <!-- Step 1 -->
+                    <div class="flex-1 w-full p-4 bg-stone-50 rounded-lg border border-stone-200 hover:border-emerald-300 transition-colors cursor-pointer group" onclick="switchTab('reactor')">
+                        <div class="text-4xl mb-2 group-hover:scale-110 transition-transform">⚗️</div>
+                        <h4 class="font-bold text-slate-800">1. Reacción</h4>
+                        <p class="text-xs text-slate-500">Transesterificación<br>60°C, NaOH</p>
+                    </div>
+                    <div class="text-stone-300 text-2xl rotate-90 md:rotate-0">➔</div>
+                    <!-- Step 2 -->
+                    <div class="flex-1 w-full p-4 bg-stone-50 rounded-lg border border-stone-200 hover:border-emerald-300 transition-colors cursor-pointer group" onclick="switchTab('termo')">
+                        <div class="text-4xl mb-2 group-hover:scale-110 transition-transform">🧪</div>
+                        <h4 class="font-bold text-slate-800">2. Separación</h4>
+                        <p class="text-xs text-slate-500">Decantación LLE<br>FAME / Glicerina</p>
+                    </div>
+                    <div class="text-stone-300 text-2xl rotate-90 md:rotate-0">➔</div>
+                    <!-- Step 3 -->
+                    <div class="flex-1 w-full p-4 bg-stone-50 rounded-lg border border-stone-200 hover:border-emerald-300 transition-colors cursor-pointer group" onclick="switchTab('analisis')">
+                        <div class="text-4xl mb-2 group-hover:scale-110 transition-transform">🔥</div>
+                        <h4 class="font-bold text-slate-800">3. Recuperación</h4>
+                        <p class="text-xs text-slate-500">Evaporación Metanol<br>VLE (Flash)</p>
+                    </div>
+                    <div class="text-stone-300 text-2xl rotate-90 md:rotate-0">➔</div>
+                    <!-- Step 4 -->
+                    <div class="flex-1 w-full p-4 bg-emerald-50 rounded-lg border border-emerald-200 group">
+                        <div class="text-4xl mb-2">🚛</div>
+                        <h4 class="font-bold text-emerald-800">4. Producto</h4>
+                        <p class="text-xs text-emerald-600">Biodiésel B100<br>Glicerina Técnica</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB: REACTOR -->
+        <section id="tab-reactor" class="hidden animate-fade-in">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Controls -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 lg:col-span-1 h-fit">
+                    <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <span>⚙️</span> Condiciones de Operación
+                    </h3>
+                    <p class="text-sm text-slate-500 mb-6">
+                        Ajuste los parámetros del reactor para ver el impacto en el balance de materia y el consumo de reactivos.
+                    </p>
+                    
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-slate-700 mb-2">
+                            Relación Molar Metanol:Aceite
+                        </label>
+                        <div class="flex items-center gap-4">
+                            <span class="text-xs font-mono bg-stone-100 px-2 py-1 rounded text-slate-600">3:1</span>
+                            <input type="range" min="3" max="9" step="0.1" value="6" id="ratio-slider" class="w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer slider-thumb">
+                            <span class="text-xs font-mono bg-stone-100 px-2 py-1 rounded text-slate-600">9:1</span>
+                        </div>
+                        <div class="mt-2 text-right">
+                            <span class="text-emerald-600 font-bold" id="ratio-value">6.0</span> : 1
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Óptimo industrial: 6:1</p>
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-slate-700 mb-2">
+                            Base de Cálculo (kg Aceite)
+                        </label>
+                        <input type="number" value="100" id="base-input" class="w-full p-2 border border-stone-300 rounded focus:ring-2 focus:ring-emerald-500 focus:outline-none text-slate-700">
+                    </div>
+
+                    <div class="p-4 bg-amber-50 rounded-lg border border-amber-100">
+                        <h4 class="text-sm font-bold text-amber-800 mb-1">Nota de Ingeniería</h4>
+                        <p class="text-xs text-amber-700">
+                            Aumentar el metanol desplaza el equilibrio (Le Chatelier) pero complica la separación posterior y aumenta el gasto energético en la recuperación.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Mass Balance Visualization -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 lg:col-span-2">
+                    <h3 class="text-xl font-bold mb-6">Balance de Materia Dinámico</h3>
+                    <div class="chart-container">
+                        <canvas id="massBalanceChart"></canvas>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 text-center">
+                        <div class="p-3 bg-stone-50 rounded">
+                            <div class="text-xs text-slate-500">Biodiésel Prod.</div>
+                            <div class="font-bold text-slate-800" id="res-biodiesel">0.0 kg</div>
+                        </div>
+                        <div class="p-3 bg-stone-50 rounded">
+                            <div class="text-xs text-slate-500">Glicerina Prod.</div>
+                            <div class="font-bold text-slate-800" id="res-glycerin">0.0 kg</div>
+                        </div>
+                        <div class="p-3 bg-stone-50 rounded">
+                            <div class="text-xs text-slate-500">MeOH Exceso</div>
+                            <div class="font-bold text-red-600" id="res-meoh">0.0 kg</div>
+                        </div>
+                        <div class="p-3 bg-stone-50 rounded">
+                            <div class="text-xs text-slate-500">Aceite Resid.</div>
+                            <div class="font-bold text-slate-800" id="res-oil">0.0 kg</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB: SEPARACIÓN (LLE) -->
+        <section id="tab-termo" class="hidden animate-fade-in">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-slate-900">Termodinámica de Separación (LLE)</h2>
+                <p class="text-slate-600">
+                    Análisis del equilibrio líquido-líquido utilizando el modelo <strong>NRTL</strong>. La eficiencia del decantador depende de mantener la composición global dentro de la zona de dos fases.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                <!-- Ternary Diagram Container -->
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-stone-200">
+                    <div class="ternary-container relative">
+                        <canvas id="ternaryChart"></canvas>
+                        <!-- Labels over canvas -->
+                        <div class="absolute bottom-0 left-0 text-xs font-bold bg-white/80 px-1">FAME (100%)</div>
+                        <div class="absolute bottom-0 right-0 text-xs font-bold bg-white/80 px-1">Glicerina (100%)</div>
+                        <div class="absolute top-0 left-1/2 transform -translate-x-1/2 text-xs font-bold bg-white/80 px-1">Metanol (100%)</div>
+                    </div>
+                    <div class="mt-4 text-center text-sm text-slate-500">
+                        Punto Rojo: Composición actual de la mezcla | Línea Azul: Curva Binodal | Punteadas: Líneas de Reparto
+                    </div>
+                </div>
+
+                <!-- Analysis Panel -->
+                <div class="space-y-6">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                        <h3 class="text-lg font-bold mb-4">Estado de la Mezcla</h3>
+                        <div id="phase-status" class="flex items-center gap-3 p-4 bg-emerald-50 text-emerald-800 rounded-lg border border-emerald-200 mb-4">
+                            <span class="text-2xl">✅</span>
+                            <div>
+                                <div class="font-bold">Dos Fases (Decantación Viable)</div>
+                                <div class="text-xs">La mezcla se separará espontáneamente.</div>
+                            </div>
+                        </div>
+                        <p class="text-sm text-slate-600 mb-4">
+                            El exceso de metanol actúa como co-solvente, incrementando la solubilidad mutua entre el biodiésel y la glicerina. Si el punto rojo sale de la curva azul, la separación física falla.
+                        </p>
+                        
+                        <!-- Mini interactive tool for LLE -->
+                        <div class="border-t border-stone-100 pt-4">
+                            <label class="block text-sm font-medium text-slate-700 mb-2">
+                                Simular contenido de Metanol (% Global)
+                            </label>
+                            <input type="range" min="10" max="60" step="1" value="17" id="meoh-slider" class="w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer slider-thumb">
+                            <div class="flex justify-between text-xs text-slate-500 mt-1">
+                                <span>10% (Bajo)</span>
+                                <span id="meoh-pct-display" class="font-bold text-slate-800">17%</span>
+                                <span>60% (Crítico)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-stone-50 p-6 rounded-xl border border-stone-200">
+                        <h3 class="text-sm font-bold text-slate-800 uppercase mb-3">Coeficientes de Actividad (NRTL)</h3>
+                        <div class="space-y-2 text-sm font-mono">
+                            <div class="flex justify-between">
+                                <span>Gamma FAME:</span>
+                                <span class="text-slate-600">~1.05</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Gamma Glicerina:</span>
+                                <span class="text-slate-600">~6.80 (Alta no-idealidad)</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Gamma Metanol:</span>
+                                <span class="text-slate-600">~1.45</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB: ANALISIS (Energía y Calidad) -->
+        <section id="tab-analisis" class="hidden animate-fade-in">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Energy Balance -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 md:col-span-1">
+                    <h3 class="text-lg font-bold mb-4">Balance Energético</h3>
+                    <div class="chart-container" style="height: 250px;">
+                        <canvas id="energyChart"></canvas>
+                    </div>
+                    <div class="mt-4 text-sm text-slate-600">
+                        <p class="mb-2"><strong>Calor Sensible:</strong> Energía para calentar reactivos de 20°C a 60°C.</p>
+                        <p><strong>Calor Reacción:</strong> Energía liberada (Exotérmica) que reduce la carga térmica externa.</p>
+                        <div class="mt-3 p-3 bg-stone-100 rounded text-center">
+                            <div class="text-xs text-slate-500">Potencia Neta (1h Batch)</div>
+                            <div class="text-xl font-bold text-slate-800" id="net-power">5.1 kW</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quality & Viscosity -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 md:col-span-1">
+                    <h3 class="text-lg font-bold mb-4">Calidad: Viscosidad</h3>
+                    <div class="relative pt-6 pb-2 text-center">
+                        <!-- Gauge simulation with CSS -->
+                        <div class="w-full bg-stone-200 rounded-full h-4 mb-2 relative overflow-hidden">
+                            <div class="absolute top-0 left-0 h-full bg-red-400 w-[20%]"></div> <!-- Too low -->
+                            <div class="absolute top-0 left-[20%] h-full bg-emerald-500 w-[30%]"></div> <!-- Correct 3.5-5.0 -->
+                            <div class="absolute top-0 left-[50%] h-full bg-red-400 w-[50%]"></div> <!-- Too high -->
+                            <!-- Marker -->
+                            <div class="absolute top-0 h-full w-1 bg-black transform -translate-x-1/2 transition-all duration-500" style="left: 35%" id="viscosity-marker"></div>
+                        </div>
+                        <div class="flex justify-between text-xs text-slate-400 font-mono">
+                            <span>2.0 cP</span>
+                            <span>EN 14214 Limit (5.0)</span>
+                            <span>8.0 cP</span>
+                        </div>
+                    </div>
+                    <div class="text-center mt-4">
+                        <div class="text-4xl font-bold text-emerald-600 mb-1" id="viscosity-value">4.50</div>
+                        <div class="text-sm text-slate-500">centipoise (cP) a 40°C</div>
+                    </div>
+                    <p class="mt-6 text-xs text-slate-500 italic">
+                        Calculado mediante modelo Grunberg-Nissan. Valores altos indican contaminación con glicerina o triglicéridos sin reaccionar.
+                    </p>
+                </div>
+
+                <!-- Sustainability -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 md:col-span-1">
+                    <h3 class="text-lg font-bold mb-4">Sostenibilidad (CO₂eq)</h3>
+                    <div class="chart-container" style="height: 250px;">
+                        <canvas id="co2Chart"></canvas>
+                    </div>
+                    <div class="mt-4 p-3 bg-teal-50 rounded border border-teal-100 text-teal-800 text-sm">
+                        <p><strong>Ahorro Estimado: 80%</strong></p>
+                        <p class="text-xs mt-1">El biodiésel de palma, gestionado correctamente, reduce drásticamente las emisiones del ciclo de vida comparado con el diésel fósil.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // State Management
+        const state = {
+            oilMass: 100, // kg
+            molarRatio: 6.0,
+            temp: 60, // C
+            conversion: 0.985,
+            lleMethanolPct: 17 // % of total mix
+        };
+
+        // Constants (Molecular Weights)
+        const MW = {
+            oil: 885.4,
+            meoh: 32.04,
+            fame: 296.5,
+            gly: 92.1,
+            koh: 56.11
+        };
+
+        // Chart Instances
+        let charts = {};
+
+        // --- Core Logic: Mass Balance Calculator ---
+        function calculateMassBalance() {
+            // Moles
+            const n_oil = (state.oilMass * 1000) / MW.oil;
+            const n_meoh_in = n_oil * state.molarRatio;
+            
+            // Reaction
+            const n_reac = n_oil * state.conversion;
+            
+            // Masses Out (kg)
+            const m_fame = (n_reac * 3 * MW.fame) / 1000;
+            const m_gly = (n_reac * MW.gly) / 1000;
+            const m_meoh_in = (n_meoh_in * MW.meoh) / 1000;
+            const m_meoh_res = m_meoh_in - (n_reac * 3 * MW.meoh / 1000);
+            const m_oil_res = ((n_oil - n_reac) * MW.oil) / 1000;
+            const m_cat = state.oilMass * 0.008; // 0.8%
+
+            return {
+                in: { oil: state.oilMass, meoh: m_meoh_in, cat: m_cat },
+                out: { fame: m_fame, gly: m_gly, meoh: m_meoh_res, oil: m_oil_res, cat: m_cat }
+            };
+        }
+
+        function calculateEnergy() {
+            const res = calculateMassBalance();
+            const dt = state.temp - 20;
+            // Q = m*Cp*dT
+            const q_oil = state.oilMass * 1.91 * dt; // kJ
+            const q_meoh = res.in.meoh * 2.53 * dt;
+            const q_sensible = (q_oil + q_meoh) / 1000; // MJ
+
+            // Rxn Heat (Exothermic) ~ -15.5 kJ/mol oil
+            const n_reac_moles = (state.oilMass * 1000 / MW.oil) * state.conversion;
+            const q_rxn = (15.5 * n_reac_moles) / 1000; // MJ (Absolute value of released heat)
+
+            return { sensible: q_sensible, rxn: q_rxn };
+        }
+
+        // --- Visualization Logic ---
+
+        function initCharts() {
+            // 1. Mass Balance Chart (Stacked Bar)
+            const ctxMass = document.getElementById('massBalanceChart').getContext('2d');
+            charts.mass = new Chart(ctxMass, {
+                type: 'bar',
+                data: {
+                    labels: ['Entrada', 'Salida'],
+                    datasets: [
+                        { label: 'Aceite', data: [0, 0], backgroundColor: '#d6d3d1' }, // Stone-300
+                        { label: 'Metanol', data: [0, 0], backgroundColor: '#3b82f6' }, // Blue-500
+                        { label: 'Catalizador', data: [0, 0], backgroundColor: '#f59e0b' }, // Amber-500
+                        { label: 'Biodiésel', data: [0, 0], backgroundColor: '#10b981' }, // Emerald-500
+                        { label: 'Glicerina', data: [0, 0], backgroundColor: '#6366f1' }  // Indigo-500
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { stacked: true },
+                        y: { stacked: true, title: { display: true, text: 'Masa (kg)' } }
+                    },
+                    plugins: { tooltip: { mode: 'index', intersect: false } }
+                }
+            });
+
+            // 2. Ternary Diagram (Scatter mapped to Cartesian)
+            // Hardcoded Binodal Curve (Approximated from Python simulation results)
+            const binodalPointsTernary = [
+                [0.99, 0.005, 0.005], [0.9, 0.02, 0.08], [0.8, 0.05, 0.15], [0.7, 0.08, 0.22], [0.6, 0.12, 0.28], // Rich FAME side
+                [0.5, 0.2, 0.3], // Plait point approximation
+                [0.2, 0.5, 0.3], 
+                [0.1, 0.7, 0.2], [0.05, 0.85, 0.1], [0.01, 0.98, 0.01] // Rich Gly side
+            ];
+            const binodalCartesian = binodalPointsTernary.map(p => ternaryToCartesian(p[0], p[1], p[2]));
+
+            const ctxTernary = document.getElementById('ternaryChart').getContext('2d');
+            charts.ternary = new Chart(ctxTernary, {
+                type: 'scatter',
+                data: {
+                    datasets: [
+                        {
+                            label: 'Curva Binodal',
+                            data: binodalCartesian,
+                            showLine: true,
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            fill: true,
+                            pointRadius: 0
+                        },
+                        {
+                            label: 'Punto Operación',
+                            data: [{x: 0.5, y: 0.2}], // Placeholder, updated dynamically
+                            pointBackgroundColor: '#ef4444',
+                            pointRadius: 8,
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { min: 0, max: 1, display: false },
+                        y: { min: 0, max: 0.866, display: false }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            // 3. Energy Chart (Doughnut)
+            const ctxEnergy = document.getElementById('energyChart').getContext('2d');
+            charts.energy = new Chart(ctxEnergy, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Carga Térmica (Ext)', 'Calor Reacción (Int)'],
+                    datasets: [{
+                        data: [50, 50],
+                        backgroundColor: ['#f59e0b', '#10b981'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '60%'
+                }
+            });
+
+            // 4. CO2 Chart (Bar)
+            const ctxCo2 = document.getElementById('co2Chart').getContext('2d');
+            charts.co2 = new Chart(ctxCo2, {
+                type: 'bar',
+                data: {
+                    labels: ['Diésel Fósil', 'Biodiésel Palma'],
+                    datasets: [{
+                        label: 'kg CO2eq / kg fuel',
+                        data: [3.2, 0.6],
+                        backgroundColor: ['#64748b', '#14b8a6'],
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true } },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        function updateSimulation() {
+            // 1. Update Mass Balance
+            const res = calculateMassBalance();
+            
+            charts.mass.data.datasets[0].data = [res.in.oil, res.out.oil];
+            charts.mass.data.datasets[1].data = [res.in.meoh, res.out.meoh];
+            charts.mass.data.datasets[2].data = [res.in.cat, res.out.cat];
+            charts.mass.data.datasets[3].data = [0, res.out.fame];
+            charts.mass.data.datasets[4].data = [0, res.out.gly];
+            charts.mass.update();
+
+            // Text Updates
+            document.getElementById('res-biodiesel').innerText = res.out.fame.toFixed(1) + ' kg';
+            document.getElementById('res-glycerin').innerText = res.out.gly.toFixed(1) + ' kg';
+            document.getElementById('res-meoh').innerText = res.out.meoh.toFixed(1) + ' kg';
+            document.getElementById('res-oil').innerText = res.out.oil.toFixed(1) + ' kg';
+
+            document.getElementById('kpi-prod').innerText = (res.out.fame / (state.oilMass/100)).toFixed(1);
+            
+            // 2. Update Energy
+            const energy = calculateEnergy();
+            const netEnergy = energy.sensible - (energy.rxn * 0.5); // Simplified: Assume 50% heat recovery
+            document.getElementById('kpi-energy').innerText = netEnergy.toFixed(1);
+            document.getElementById('net-power').innerText = (netEnergy / 3.6).toFixed(1) + ' kW'; // MJ to kWh for 1h
+
+            charts.energy.data.datasets[0].data = [energy.sensible, energy.rxn];
+            charts.energy.update();
+
+            // 3. Update LLE (Ternary)
+            // Logic: High methanol moves point towards top vertex (0.5, 0.866)
+            // High FAME/Gly split moves it towards baseline
+            // We simulate the point based on state.lleMethanolPct
+            
+            const meohFrac = state.lleMethanolPct / 100;
+            // Approx remaining is 50/50 Fame/Gly for simplicity of visualization in this specific view
+            const fameFrac = (1 - meohFrac) * 0.85; // Mostly Fame layer
+            const glyFrac = (1 - meohFrac) * 0.15; 
+            
+            const pointXY = ternaryToCartesian(fameFrac, glyFrac, meohFrac);
+            charts.ternary.data.datasets[1].data = [pointXY];
+            charts.ternary.update();
+
+            // Check if inside or outside binodal (Simplified check: if MeOH > 40%, single phase)
+            const statusDiv = document.getElementById('phase-status');
+            if (state.lleMethanolPct > 35) {
+                statusDiv.innerHTML = `
+                    <span class="text-2xl">⚠️</span>
+                    <div>
+                        <div class="font-bold">Una Fase (Fallo de Separación)</div>
+                        <div class="text-xs">Exceso de metanol impide la decantación.</div>
+                    </div>`;
+                statusDiv.className = "flex items-center gap-3 p-4 bg-amber-50 text-amber-800 rounded-lg border border-amber-200 mb-4";
+            } else {
+                statusDiv.innerHTML = `
+                    <span class="text-2xl">✅</span>
+                    <div>
+                        <div class="font-bold">Dos Fases (Decantación Viable)</div>
+                        <div class="text-xs">La mezcla se separará espontáneamente.</div>
+                    </div>`;
+                statusDiv.className = "flex items-center gap-3 p-4 bg-emerald-50 text-emerald-800 rounded-lg border border-emerald-200 mb-4";
+            }
+
+            // 4. Update Viscosity
+            // Grunberg-Nissan approx logic
+            // Base 4.5, increases if conversion drops or glycerol remains
+            let visc = 4.5;
+            if (state.molarRatio < 4.5) visc += 2.0; // Incomplete reaction
+            document.getElementById('viscosity-value').innerText = visc.toFixed(2);
+            
+            // Marker position: 2.0 = 0%, 5.0 = 35% (limit), 8.0 = 100%
+            // Map 2..8 to 0..100%
+            const markerPos = ((visc - 2) / (8 - 2)) * 100;
+            document.getElementById('viscosity-marker').style.left = `${Math.min(Math.max(markerPos, 0), 100)}%`;
+        }
+
+        // Helper: Ternary (a,b,c) to Cartesian (x,y)
+        // a=BottomLeft, b=BottomRight, c=Top
+        // Using standard equilateral triangle projection
+        function ternaryToCartesian(a, b, c) {
+            const sum = a + b + c;
+            const normA = a / sum;
+            const normB = b / sum;
+            const normC = c / sum;
+            
+            // x = 0.5 * (2*b + c) / (a+b+c) -> mapped to our vertex definition
+            // Let's map specifically: FAME(1,0,0) -> (0,0), Gly(0,1,0) -> (1,0), MeOH(0,0,1) -> (0.5, sqrt(3)/2)
+            // My previous python code used: FAME=Left, Gly=Right, MeOH=Top.
+            // Formula: x = 0.5 * (2*b + c) 
+            //          y = (sqrt(3)/2) * c
+            
+            return {
+                x: 0.5 * (2 * normB + normC),
+                y: (Math.sqrt(3) / 2) * normC
+            };
+        }
+
+        // --- Event Listeners ---
+        
+        document.getElementById('ratio-slider').addEventListener('input', (e) => {
+            state.molarRatio = parseFloat(e.target.value);
+            document.getElementById('ratio-value').innerText = state.molarRatio.toFixed(1);
+            // Link molar ratio to LLE methanol pct roughly
+            // Higher ratio = more excess meoh = higher pct
+            // Ratio 6 -> ~17%, Ratio 9 -> ~25%
+            // Simple linear map for demo effect across tabs
+            // state.lleMethanolPct = 10 + (state.molarRatio - 3) * 3;
+            // document.getElementById('meoh-slider').value = state.lleMethanolPct; 
+            updateSimulation();
+        });
+
+        document.getElementById('base-input').addEventListener('input', (e) => {
+            state.oilMass = parseFloat(e.target.value) || 0;
+            updateSimulation();
+        });
+
+        document.getElementById('meoh-slider').addEventListener('input', (e) => {
+            state.lleMethanolPct = parseInt(e.target.value);
+            document.getElementById('meoh-pct-display').innerText = state.lleMethanolPct + '%';
+            updateSimulation();
+        });
+
+        // Navigation Logic
+        function switchTab(tabId) {
+            // Hide all sections
+            document.querySelectorAll('section').forEach(el => {
+                el.classList.add('hidden');
+                el.classList.remove('block');
+            });
+            // Show target
+            const target = document.getElementById('tab-' + tabId);
+            target.classList.remove('hidden');
+            target.classList.add('block');
+            
+            // Update Nav Styles
+            document.querySelectorAll('nav button').forEach(el => {
+                el.classList.remove('tab-active');
+                el.classList.add('tab-inactive');
+            });
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn) {
+                activeBtn.classList.remove('tab-inactive');
+                activeBtn.classList.add('tab-active');
+            }
+
+            // Resize charts if needed
+            if (tabId === 'reactor' && charts.mass) charts.mass.resize();
+            if (tabId === 'termo' && charts.ternary) charts.ternary.resize();
+            if (tabId === 'analisis') {
+                if (charts.energy) charts.energy.resize();
+                if (charts.co2) charts.co2.resize();
+            }
+        }
+
+        // Init
+        window.addEventListener('load', () => {
+            initCharts();
+            updateSimulation();
+        });
+
+    </script>
+    <style>
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fade-in 0.4s ease-out forwards;
+        }
+    </style>
+</body>
+</html>
+

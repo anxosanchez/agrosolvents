@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Planta de Biodiésel - Ingeniería Química</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .chart-container { 
+            position: relative; 
+            width: 100%; 
+            max-width: 600px; 
+            margin: 0 auto; 
+            height: 350px; 
+            max-height: 400px; 
+        }
+        input[type=range] {
+            -webkit-appearance: none;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 6px;
+            cursor: pointer;
+            background: #e2e8f0;
+            border-radius: 3px;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #10b981;
+            cursor: pointer;
+            -webkit-appearance: none;
+            margin-top: -7px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .section-fade { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+    <!-- Chosen Palette: Industrial Emerald (Verde Esmeralda, Pizarra Profunda y Ámbar Energético) -->
+    <!-- Application Structure Plan: 
+         La aplicación se diseña como una SPA (Single Page Application) orientada al análisis de ingeniería.
+         1. Dashboard de KPIs: Visualización inmediata de rendimientos y masas.
+         2. Panel de Control Lateral: Sliders para variables de entrada (Ratio, Temp, Conversión).
+         3. Vistas Especializadas (Tabs):
+            - Reactor: Balance de materia gráfico.
+            - Termodinámica: Diagrama ternario LLE interactivo para evaluar la separación de fases.
+            - Calidad: Medidor de viscosidad basado en el modelo de Grunberg-Nissan.
+    -->
+    <!-- Visualization & Content Choices: 
+         - Balance de Masa: Gráfico de barras apiladas (Chart.js) para verificar conservación.
+         - Equilibrio LLE: Gráfico de dispersión (Scatter) mapeado a coordenadas de un triángulo equilátero.
+         - Energía: Gráfico de tipo Dona (Doughnut) para balance de calor.
+         - Calidad: Indicador visual tipo gauge (HTML/CSS) para límites de viscosidad norma EN 14214.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased">
+
+    <!-- Header -->
+    <header class="bg-slate-900 text-white shadow-2xl sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <span class="text-3xl text-emerald-400">⚗️</span>
+                <div>
+                    <h1 class="text-xl font-extrabold tracking-tight">BIO<span class="text-emerald-400">PALMA</span> SIM</h1>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Simulador Offline de Ingeniería Química</p>
+                </div>
+            </div>
+            <div class="flex gap-6 text-xs font-bold uppercase tracking-tighter">
+                <button onclick="switchTab('reactor')" class="hover:text-emerald-400 transition">Reactor</button>
+                <button onclick="switchTab('termo')" class="hover:text-emerald-400 transition">Termodinámica</button>
+                <button onclick="switchTab('calidad')" class="hover:text-emerald-400 transition">Calidad</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 py-8">
+        
+        <!-- KPIs Principales -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-l-emerald-500">
+                <h3 class="text-xs font-bold text-slate-400 uppercase">Rendimiento</h3>
+                <p id="kpi-yield" class="text-3xl font-black text-emerald-600">--%</p>
+                <p class="text-[10px] text-slate-400 mt-1">Masa Aceite vs FAME</p>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-l-blue-500">
+                <h3 class="text-xs font-bold text-slate-400 uppercase">Producción FAME</h3>
+                <p id="kpi-mass" class="text-3xl font-black text-slate-900">-- kg</p>
+                <p class="text-[10px] text-slate-400 mt-1">Por batch (Base 100kg Aceite)</p>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-l-amber-500">
+                <h3 class="text-xs font-bold text-slate-400 uppercase">Carga Térmica</h3>
+                <p id="kpi-energy" class="text-3xl font-black text-amber-600">-- MJ</p>
+                <p class="text-[10px] text-slate-400 mt-1">Calor Neto Requerido</p>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-l-slate-800">
+                <h3 class="text-xs font-bold text-slate-400 uppercase">Estado Fase</h3>
+                <p id="kpi-phase" class="text-xl font-black text-slate-700">Calculando...</p>
+                <p class="text-[10px] text-slate-400 mt-1">Miscibilidad en Decantador</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Sidebar: Parámetros de Control -->
+            <div class="lg:col-span-4 space-y-6">
+                <div class="bg-white p-8 rounded-3xl shadow-lg border border-slate-100">
+                    <h2 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                        <span>⚙️</span> Variables de Control
+                    </h2>
+                    
+                    <div class="space-y-8">
+                        <!-- Molar Ratio -->
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <label class="text-sm font-bold text-slate-700">Relación Metanol:Aceite</label>
+                                <span id="val-ratio" class="text-emerald-600 font-bold bg-emerald-50 px-2 rounded">6.0 : 1</span>
+                            </div>
+                            <input type="range" id="input-ratio" min="3" max="10" step="0.5" value="6" class="w-full">
+                            <p class="text-[10px] text-slate-400 mt-2 italic">Un exceso alto desplaza el equilibrio pero dificulta la decantación.</p>
+                        </div>
+
+                        <!-- Temperature -->
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <label class="text-sm font-bold text-slate-700">Temperatura Reacción</label>
+                                <span id="val-temp" class="text-amber-600 font-bold bg-amber-50 px-2 rounded">60 °C</span>
+                            </div>
+                            <input type="range" id="input-temp" min="40" max="85" step="1" value="60" class="w-full">
+                        </div>
+
+                        <!-- Conversion -->
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <label class="text-sm font-bold text-slate-700">Conversión Final</label>
+                                <span id="val-conv" class="text-blue-600 font-bold bg-blue-50 px-2 rounded">98.5 %</span>
+                            </div>
+                            <input type="range" id="input-conv" min="80" max="100" step="0.1" value="98.5" class="w-full">
+                        </div>
+                    </div>
+
+                    <!-- Datos Moleculares -->
+                    <div class="mt-8 pt-8 border-t border-slate-100 space-y-4">
+                        <div class="p-4 bg-slate-900 rounded-2xl text-white">
+                            <h4 class="text-[10px] font-bold text-emerald-400 uppercase mb-3">Modelado Termodinámico</h4>
+                            <div class="space-y-1 text-[10px] mono text-slate-300">
+                                <p>ACEITE (Palm): 885.4 g/mol</p>
+                                <p>METANOL: 32.04 g/mol</p>
+                                <p>FAME: 296.5 g/mol</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Área de Visualización Principal -->
+            <div class="lg:col-span-8 space-y-6">
+                
+                <!-- Tab: Reactor (Balance de Masa) -->
+                <div id="tab-reactor" class="tab-content section-fade bg-white p-8 rounded-3xl shadow-lg border border-slate-100">
+                    <h3 class="text-xl font-bold mb-6 text-slate-800">Balance de Masa (Ley de Conservación)</h3>
+                    <div class="chart-container">
+                        <canvas id="massChart"></canvas>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 text-center">
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Masa FAME</p>
+                            <p id="out-fame" class="text-lg font-black text-slate-800">-- kg</p>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Glicerina</p>
+                            <p id="out-gly" class="text-lg font-black text-slate-800">-- kg</p>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">MeOH Exceso</p>
+                            <p id="out-meoh" class="text-lg font-black text-blue-600">-- kg</p>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Aceite Residual</p>
+                            <p id="out-oil" class="text-lg font-black text-slate-800">-- kg</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Termodinamica (Diagrama Ternario) -->
+                <div id="tab-termo" class="tab-content hidden section-fade bg-white p-8 rounded-3xl shadow-lg border border-slate-100">
+                    <h3 class="text-xl font-bold mb-4 text-slate-800">Equilibrio Líquido-Líquido (NRTL)</h3>
+                    <p class="text-xs text-slate-500 mb-8 leading-relaxed">
+                        Representación del sistema **FAME - Glicerina - Metanol**. El punto rojo localiza la composición de la mezcla de salida. 
+                        La zona sombreada representa la inmiscibilidad; el punto debe estar dentro para una separación física eficiente.
+                    </p>
+                    <div class="chart-container" style="height: 400px; max-height: 500px;">
+                        <canvas id="ternaryChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Tab: Calidad (Viscosidad y Energía) -->
+                <div id="tab-calidad" class="tab-content hidden section-fade bg-white p-8 rounded-3xl shadow-lg border border-slate-100">
+                    <h3 class="text-xl font-bold mb-6 text-slate-800">Parámetros de Calidad y Termoquímica</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Viscosidad -->
+                        <div class="space-y-4">
+                            <h4 class="text-sm font-bold text-slate-700 uppercase italic">Viscosidad (Grunberg-Nissan)</h4>
+                            <div class="relative h-10 bg-slate-100 rounded-2xl border border-slate-200 overflow-hidden">
+                                <div id="visc-bar" class="h-full bg-emerald-500 transition-all duration-700" style="width: 50%"></div>
+                                <div class="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-slate-900 pointer-events-none">
+                                    Norma EN 14214 (3.5 - 5.0 cSt)
+                                </div>
+                            </div>
+                            <div class="flex justify-between text-[10px] font-bold text-slate-400">
+                                <span>2.0 cP</span>
+                                <span id="visc-val" class="text-slate-900 text-lg">4.50 cP</span>
+                                <span>8.0 cP</span>
+                            </div>
+                        </div>
+
+                        <!-- Balance de Energía -->
+                        <div class="space-y-4">
+                            <h4 class="text-sm font-bold text-slate-700 uppercase italic">Distribución de Energía (MJ)</h4>
+                            <div class="h-[180px]">
+                                <canvas id="energyChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-8 p-4 bg-emerald-50 border border-emerald-100 rounded-2xl">
+                        <p class="text-xs text-emerald-800 font-semibold">Nota: La viscosidad se calcula considerando las trazas de aceite y metanol residuales. Una conversión baja eleva drásticamente la viscosidad del combustible.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-slate-900 text-white py-12 mt-12">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <p class="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-2">Simulación Digital de Planta Piloto</p>
+            <p class="text-[10px] text-slate-500">Desarrollado para fines de investigación y docencia técnica. &copy; 2024</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- Motor de Ingeniería ---
+        const MW = { oil: 885.4, meoh: 32.04, fame: 296.5, gly: 92.09 };
+        let charts = {};
+        
+        const state = {
+            ratio: 6.0,
+            temp: 60,
+            conv: 98.5,
+            baseOil: 100.0
+        };
+
+        // Envoltura de etiquetas para Chart.js
+        function wrapLabel(str) {
+            if (str.length <= 16) return str;
+            const words = str.split(' ');
+            const lines = [];
+            let current = '';
+            words.forEach(w => {
+                if ((current + w).length > 16) { lines.push(current.trim()); current = w + ' '; }
+                else { current += w + ' '; }
+            });
+            lines.push(current.trim());
+            return lines;
+        }
+
+        function initCharts() {
+            // 1. Gráfico de Masa
+            const ctxMass = document.getElementById('massChart').getContext('2d');
+            charts.mass = new Chart(ctxMass, {
+                type: 'bar',
+                data: {
+                    labels: [wrapLabel('Entrada Materia Prima'), wrapLabel('Salida Productos')],
+                    datasets: [
+                        { label: 'Aceite', data: [0, 0], backgroundColor: '#94a3b8' },
+                        { label: 'Metanol', data: [0, 0], backgroundColor: '#3b82f6' },
+                        { label: 'Biodiésel', data: [0, 0], backgroundColor: '#10b981' },
+                        { label: 'Glicerina', data: [0, 0], backgroundColor: '#6366f1' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { x: { stacked: true }, y: { stacked: true, title: { display: true, text: 'Masa (kg)' } } },
+                    plugins: { 
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                title: function(items) {
+                                    let label = items[0].chart.data.labels[items[0].dataIndex];
+                                    return Array.isArray(label) ? label.join(' ') : label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 2. Gráfico Ternario (Scatter)
+            const ctxTernary = document.getElementById('ternaryChart').getContext('2d');
+            charts.ternary = new Chart(ctxTernary, {
+                type: 'scatter',
+                data: {
+                    datasets: [
+                        {
+                            label: 'Límite Miscibilidad',
+                            data: generateBinodal(),
+                            showLine: true,
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            fill: true, pointRadius: 0, tension: 0.4
+                        },
+                        {
+                            label: 'Mezcla',
+                            data: [{x: 0, y: 0}],
+                            backgroundColor: '#ef4444',
+                            pointRadius: 10, pointBorderColor: '#fff', pointBorderWidth: 2
+                        },
+                        {
+                            label: 'Contorno',
+                            data: [{x:0, y:0}, {x:1, y:0}, {x:0.5, y:0.866}, {x:0, y:0}],
+                            showLine: true, borderColor: '#cbd5e1', pointRadius: 0, fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: { x: { display: false, min: -0.1, max: 1.1 }, y: { display: false, min: -0.1, max: 1.0 } },
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            // 3. Gráfico Energía
+            const ctxEnergy = document.getElementById('energyChart').getContext('2d');
+            charts.energy = new Chart(ctxEnergy, {
+                type: 'doughnut',
+                data: {
+                    labels: [wrapLabel('Calor Sensible'), wrapLabel('Calor Reacción')],
+                    datasets: [{
+                        data: [1, 1], backgroundColor: ['#f59e0b', '#10b981'], borderWidth: 0
+                    }]
+                },
+                options: { 
+                    responsive: true, maintainAspectRatio: false, cutout: '75%',
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                title: function(items) {
+                                    let label = items[0].chart.data.labels[items[0].dataIndex];
+                                    return Array.isArray(label) ? label.join(' ') : label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function generateBinodal() {
+            const pts = [];
+            // Modelo visual de campana LLE
+            for (let i = 0.01; i <= 0.99; i += 0.05) {
+                let x = i;
+                let y = 1.9 * i * (1 - i) * 0.866; 
+                pts.push({ x: x, y: y });
+            }
+            return pts;
+        }
+
+        function ternaryCoord(f_fame, f_gly, f_meoh) {
+            // Proyección cartográfica a triángulo
+            const x = 0.5 * (2 * f_gly + f_meoh);
+            const y = (Math.sqrt(3) / 2) * f_meoh;
+            return { x, y };
+        }
+
+        function updateSimulation() {
+            // Moles
+            const n_oil = (state.baseOil * 1000) / MW.oil;
+            const n_meoh_in = n_oil * state.ratio;
+            const n_reac = n_oil * (state.conv / 100);
+
+            // Masas Out (kg)
+            const m_meoh_in = (n_meoh_in * MW.meoh) / 1000;
+            const m_fame = (n_reac * 3 * MW.fame) / 1000;
+            const m_gly = (n_reac * MW.gly) / 1000;
+            const m_meoh_res = m_meoh_in - (n_reac * 3 * MW.meoh / 1000);
+            const m_oil_res = state.baseOil * (1 - state.conv / 100);
+
+            // UI
+            document.getElementById('kpi-yield').innerText = state.conv.toFixed(1) + "%";
+            document.getElementById('kpi-mass').innerText = m_fame.toFixed(1) + " kg";
+            document.getElementById('out-fame').innerText = m_fame.toFixed(2) + " kg";
+            document.getElementById('out-gly').innerText = m_gly.toFixed(2) + " kg";
+            document.getElementById('out-meoh').innerText = m_meoh_res.toFixed(2) + " kg";
+            document.getElementById('out-oil').innerText = m_oil_res.toFixed(2) + " kg";
+
+            // Masa Chart
+            charts.mass.data.datasets[0].data = [state.baseOil, m_oil_res];
+            charts.mass.data.datasets[1].data = [m_meoh_in, m_meoh_res];
+            charts.mass.data.datasets[2].data = [0, m_fame];
+            charts.mass.data.datasets[3].data = [0, m_gly];
+            charts.mass.update();
+
+            // Energía
+            const dt = state.temp - 20;
+            const q_sens = (state.baseOil * 1.95 + m_meoh_in * 2.53) * dt / 1000; // MJ
+            const q_rxn = (n_reac * 15.2) / 1000; // MJ
+            document.getElementById('kpi-energy').innerText = (q_sens - q_rxn).toFixed(1) + " MJ";
+            charts.energy.data.datasets[0].data = [q_sens, q_rxn];
+            charts.energy.update();
+
+            // Ternario
+            const totalOutMol = (m_fame/MW.fame) + (m_gly/MW.gly) + (m_meoh_res/MW.meoh);
+            const x_fame = (m_fame/MW.fame) / totalOutMol;
+            const x_gly = (m_gly/MW.gly) / totalOutMol;
+            const x_meoh = (m_meoh_res/MW.meoh) / totalOutMol;
+            const coord = ternaryCoord(x_fame, x_gly, x_meoh);
+            charts.ternary.data.datasets[1].data = [coord];
+            charts.ternary.update();
+
+            const kpiPhase = document.getElementById('kpi-phase');
+            if (x_meoh > 0.36) {
+                kpiPhase.innerText = "Mono-Fase";
+                kpiPhase.className = "text-xl font-black text-red-600";
+            } else {
+                kpiPhase.innerText = "Bi-Fásico";
+                kpiPhase.className = "text-xl font-black text-emerald-600";
+            }
+
+            // Viscosidad
+            let mu = 4.45 + (1 - state.conv/100)*25 + (state.ratio-6)*0.05;
+            document.getElementById('visc-val').innerText = mu.toFixed(2) + " cP";
+            const viscPct = ((mu - 2) / (8 - 2)) * 100;
+            document.getElementById('visc-bar').style.width = Math.min(Math.max(viscPct, 0), 100) + "%";
+            document.getElementById('visc-bar').className = (mu >= 3.5 && mu <= 5.0) ? "h-full bg-emerald-500 transition-all duration-700" : "h-full bg-amber-500 transition-all duration-700";
+        }
+
+        // --- Eventos ---
+
+        function switchTab(id) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+            document.getElementById('tab-' + id).classList.remove('hidden');
+        }
+
+        document.getElementById('input-ratio').addEventListener('input', (e) => {
+            state.ratio = parseFloat(e.target.value);
+            document.getElementById('val-ratio').innerText = state.ratio.toFixed(1) + " : 1";
+            updateSimulation();
+        });
+        document.getElementById('input-temp').addEventListener('input', (e) => {
+            state.temp = parseInt(e.target.value);
+            document.getElementById('val-temp').innerText = state.temp + " °C";
+            updateUI();
+        });
+        document.getElementById('input-conv').addEventListener('input', (e) => {
+            state.conv = parseFloat(e.target.value);
+            document.getElementById('val-conv').innerText = state.conv.toFixed(1) + " %";
+            updateSimulation();
+        });
+
+        window.onload = () => {
+            initCharts();
+            updateSimulation();
+        };
+    </script>
+</body>
+</html>

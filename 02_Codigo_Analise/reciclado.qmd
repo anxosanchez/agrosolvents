@@ -1,0 +1,118 @@
+---
+title: "Simulación de Planta de Reciclado de Biodiésel y DBEs mediante ATFE"
+subtitle: "Análisis Termodinámico y Electromecánico"
+author: "Ingeniería de Procesos"
+date: last-modified
+format:
+  html:
+    theme: cosmo
+    toc: true
+    code-fold: true
+    number-sections: true
+jupyter: python3
+---
+
+# 1. Introducción Teórica
+
+El reciclado de biosolventes, específicamente el **Biodiésel (FAME)** y los **Ésteres Dibásicos (DBE)**, es fundamental para la economía circular en la industria química. Estos disolventes se contaminan con resinas, polímeros y aceites pesados tras su uso en limpieza industrial.
+
+Debido a la alta sensibilidad térmica del biodiésel (riesgo de oxidación y polimerización) y al alto punto de ebullición de los componentes ($>200^\circ\text{C}$), la destilación convencional es inviable. La tecnología seleccionada es el **Evaporador de Película Agitada (ATFE - Agitated Thin Film Evaporator)**.
+
+## 1.1 El Equipo: ATFE
+
+El ATFE utiliza un rotor mecánico que distribuye el líquido en una capa fina ($0.5 - 2 \text{ mm}$) sobre una pared caliente. Esto permite: \* **Tiempos de residencia cortos (s):** Minimiza la degradación. \* **Alto coeficiente** $U$: La agitación rompe la viscosidad. \* **Operación a Alto Vacío:** Reduce drásticamente las temperaturas de ebullición.
+
+## 1.2 Química de los Fluidos
+
+Analizaremos dos escenarios críticos basados en la materia prima del biodiésel:
+
+| Característica | Biodiésel de Girasol | Biodiésel de Palma |
+|:-----------------------|:-----------------------|:-----------------------|
+| **Componente Principal** | Metil Linoleato (C18:2) | Metil Palmitato (C16:0) |
+| **Estructura** | Poliinsaturado ("Kinks") | Saturado (Lineal) |
+| **Viscosidad** | Baja | Media/Alta |
+| **Punto de Fluidez** | $-5^\circ\text{C}$ (Líquido) | $+30^\circ\text{C}$ (Semisólido) |
+| **Riesgo** | Polimerización térmica | Bloqueo por frío |
+
+------------------------------------------------------------------------
+
+# 2. Configuración de la Simulación
+
+A continuación, se inicializan las librerías de cálculo termodinámico.
+
+```{python}
+#| label: setup
+#| echo: true
+#| output: false
+
+import numpy as np
+import matplotlib.pyplot as plt
+from thermo import Mixture
+
+# Funciones auxiliares de conversión
+def C_to_K(c): return c + 273.15
+def K_to_C(k): return k - 273.15
+def bar_to_Pa(b): return b * 100000.0
+
+# Configuración de gráficos
+plt.style.use('seaborn-v0_8-whitegrid')
+```
+
+# 3. Modelo Matemático (Python)
+
+Se ha desarrollado un modelo discreto (diferencias finitas) que integra: 1. **VLE (Equilibrio Líquido-Vapor):** Usando la librería `thermo`. 2. **Transferencia de Calor:** Coeficiente $U$ variable dependiente de la viscosidad local. 3. **Potencia Mecánica:** Cálculo del consumo del rotor por cizallamiento viscoso.
+
+Definimos la función principal de simulación para poder reutilizarla con diferentes tipos de biodiésel.
+
+```{python}
+#\| label: model-definition
+
+def simular_atfe(biodiesel_type='sunflower'): 
+    # --- 1. PARÁMETROS DE DISEÑO --- 
+    L = 3.0 # m
+    D = 0.5 # m 
+    Area_total = np.pi * D * L 
+    N_steps = 50
+    dA = Area_total / N_steps
+    
+    # Parámetros Mecánicos
+    RPM = 300.0
+    Tip_Speed = (RPM * np.pi * D) / 60.0
+    Film_Thickness = 0.001 # 1 mm
+
+    # Condiciones Operativas
+    P_op_bar = 0.05      # 50 mbar (Alto Vacío)
+
+    P_op_Pa = bar_to_Pa(P_op_bar)
+    T_wall_C = 180.0     # Temperatura Aceite Térmico
+    T_wall_K = C_to_K(T_wall_C)
+
+    # Coeficientes Base
+    U_ref = 1200.0      
+    mu_ref = 0.0005     
+    exponent_n = 0.25   
+
+    # --- 2. DEFINICIÓN DE COMPONENTES ---
+    # Mezcla: Metanol + DBE (Dimetil Adipato) + Biodiésel
+    if biodiesel_type == 'sunflower':
+        bio_comp = 'methyl linoleate'
+        label = "Girasol (Linoleico)"
+    elif biodiesel_type == 'palm':
+        bio_comp = 'methyl palmitate'
+        label = "Palma (Palmítico)"
+    else:
+        bio_comp = 'methyl oleate'
+        label = "Genérico (Oleico)"
+    
+    comps = ['methanol', 'dimethyl adipate', bio_comp]
+
+    # Alimentación (Feed)
+    m_dot_feed = 500.0 / 3600.0  # kg/s
+    ws_feed = [0.05, 0.45, 0.50] # 5% Ligero, 45% DBE, 50% Biodiésel
+    T_feed_C = 60.0
+
+    # Inicialización
+    m_comps = [m_dot_feed * w for w in ws_feed]
+
+simular_atfe('sunflower')
+```

@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis de Sensibilidad Económica: Planta Biodiésel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Energía Solar Industrial (Vibrant Teal, Deep Navy, Golden Yellow, and Coral) -->
+    <!-- 
+        Palette HEX Codes:
+        - Primary: #0ea5e9 (Sky Blue)
+        - Success: #10b981 (Emerald)
+        - Warning: #f59e0b (Amber)
+        - Danger: #ef4444 (Red)
+        - Background: #f8fafc (Slate 50)
+        - Text: #0f172a (Slate 900)
+    -->
+    <style>
+        body { font-family: 'Roboto', sans-serif; background-color: #f8fafc; color: #0f172a; }
+        h1, h2, h3 { font-family: 'Montserrat', sans-serif; }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 650px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (max-width: 768px) { .chart-container { height: 300px; } }
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 6px;
+            cursor: pointer;
+            background: #e2e8f0;
+            border-radius: 3px;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            height: 18px;
+            width: 18px;
+            border-radius: 50%;
+            background: #0ea5e9;
+            cursor: pointer;
+            -webkit-appearance: none;
+            margin-top: -6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        .metric-card {
+            transition: transform 0.2s ease-in-out;
+        }
+        .metric-card:hover {
+            transform: translateY(-4px);
+        }
+    </style>
+</head>
+<body class="p-0 m-0">
+
+    <!-- Header & Navigation -->
+    <nav class="bg-slate-900 text-white p-4 sticky top-0 z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <span class="text-2xl">📊</span>
+                <span class="font-extrabold text-xl tracking-tight">BIO<span class="text-sky-400">ECON</span> SIM</span>
+            </div>
+            <div class="hidden md:flex space-x-6 text-sm font-semibold uppercase tracking-widest">
+                <a href="#summary" class="hover:text-sky-400 transition">Resumen</a>
+                <a href="#sensitivity" class="hover:text-sky-400 transition">Sensibilidad</a>
+                <a href="#breakeven" class="hover:text-sky-400 transition">Equilibrio</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+        <!-- Introduction Section -->
+        <section id="summary" class="mb-12">
+            <div class="bg-white rounded-3xl p-8 shadow-xl border border-slate-100 flex flex-col md:flex-row items-center gap-8">
+                <div class="md:w-2/3">
+                    <h1 class="text-4xl font-extrabold text-slate-900 mb-4">Análisis de <span class="text-sky-500">Sensibilidad Económica</span></h1>
+                    <p class="text-lg text-slate-600 leading-relaxed mb-6">
+                        Bienvenido al simulador financiero de la planta de biodiésel. Esta herramienta traduce los parámetros químicos de la simulación técnica a indicadores de rentabilidad. Explore cómo las fluctuaciones en los precios de las materias primas y los servicios afectan el margen operativo.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <span class="bg-sky-100 text-sky-700 px-4 py-2 rounded-full text-sm font-bold">Base: 1,000 Ton/Mes</span>
+                        <span class="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-bold">Moneda: USD</span>
+                    </div>
+                </div>
+                <div class="md:w-1/3 grid grid-cols-2 gap-4">
+                    <div class="bg-slate-50 p-4 rounded-2xl text-center border border-slate-100">
+                        <p class="text-xs font-bold text-slate-400 uppercase">Margen Neto</p>
+                        <p id="kpi-margin" class="text-2xl font-black text-emerald-500">22.4%</p>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-2xl text-center border border-slate-100">
+                        <p class="text-xs font-bold text-slate-400 uppercase">Punto Eq.</p>
+                        <p id="kpi-breakeven" class="text-2xl font-black text-amber-500">420 T</p>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-2xl text-center border border-slate-100">
+                        <p class="text-xs font-bold text-slate-400 uppercase">Unitario</p>
+                        <p id="kpi-unit-cost" class="text-2xl font-black text-slate-700">$0.82</p>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-2xl text-center border border-slate-100">
+                        <p class="text-xs font-bold text-slate-400 uppercase">ROI Est.</p>
+                        <p id="kpi-roi" class="text-2xl font-black text-sky-500">18.5%</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+            <!-- Side Controls (Parameters) -->
+            <section class="lg:col-span-4 space-y-6">
+                <div class="bg-white rounded-3xl p-6 shadow-xl border border-slate-100 sticky top-24">
+                    <h2 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                        <span>🛠️</span> Variables de Mercado
+                    </h2>
+                    
+                    <!-- Slider: Oil Price -->
+                    <div class="mb-6">
+                        <label class="flex justify-between text-sm font-bold text-slate-700 mb-2">
+                            Precio Aceite Palma ($/kg)
+                            <span id="label-oil" class="text-sky-600 font-black">0.75</span>
+                        </label>
+                        <input type="range" id="input-oil" min="0.5" max="1.5" step="0.01" value="0.75">
+                        <p class="text-xs text-slate-400 mt-1">Impacto: Crítico (Variables Directas)</p>
+                    </div>
+
+                    <!-- Slider: Biodiesel Price -->
+                    <div class="mb-6">
+                        <label class="flex justify-between text-sm font-bold text-slate-700 mb-2">
+                            Precio Venta Biodiésel ($/kg)
+                            <span id="label-sale" class="text-emerald-600 font-black">1.10</span>
+                        </label>
+                        <input type="range" id="input-sale" min="0.8" max="1.8" step="0.01" value="1.10">
+                        <p class="text-xs text-slate-400 mt-1">Dependencia de precios internacionales de energía</p>
+                    </div>
+
+                    <!-- Slider: Energy Price -->
+                    <div class="mb-8">
+                        <label class="flex justify-between text-sm font-bold text-slate-700 mb-2">
+                            Coste Energía ($/kWh)
+                            <span id="label-energy" class="text-amber-600 font-black">0.12</span>
+                        </label>
+                        <input type="range" id="input-energy" min="0.05" max="0.30" step="0.01" value="0.12">
+                    </div>
+
+                    <!-- Diagrama de Proceso (HTML/CSS) -->
+                    <div class="bg-slate-900 text-white p-6 rounded-2xl overflow-hidden relative">
+                        <h4 class="text-xs font-bold text-sky-400 uppercase mb-4 tracking-tighter">Diagrama de Flujo Económico</h4>
+                        <div class="flex flex-col space-y-3 relative z-10">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs">Aceite (In)</span>
+                                <div class="h-1 flex-grow mx-2 bg-slate-700 rounded-full overflow-hidden">
+                                    <div id="flow-oil" class="h-full bg-sky-400" style="width: 70%"></div>
+                                </div>
+                                <span class="text-xs font-bold">$750k</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs">Energía</span>
+                                <div class="h-1 flex-grow mx-2 bg-slate-700 rounded-full overflow-hidden">
+                                    <div id="flow-energy" class="h-full bg-amber-400" style="width: 15%"></div>
+                                </div>
+                                <span class="text-xs font-bold">$120k</span>
+                            </div>
+                            <div class="flex items-center justify-center py-2">
+                                <span class="text-lg">➔</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-emerald-400">BIODIÉSEL</span>
+                                <span class="text-xs font-bold">$1.1M</span>
+                            </div>
+                        </div>
+                        <div class="absolute -right-4 -bottom-4 opacity-10 text-8xl">🏗️</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Charts Section -->
+            <section class="lg:col-span-8 space-y-8">
+                
+                <!-- Chart 1: Cost Structure -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-white rounded-3xl p-6 shadow-xl border border-slate-100">
+                        <h3 class="text-lg font-bold text-slate-900 mb-2">Estructura de Costos</h3>
+                        <p class="text-xs text-slate-500 mb-6">Desglose porcentual del OPEX mensual basado en precios actuales.</p>
+                        <div class="chart-container">
+                            <canvas id="costChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-3xl p-6 shadow-xl border border-slate-100">
+                        <h3 class="text-lg font-bold text-slate-900 mb-2">Sensibilidad (Tornado)</h3>
+                        <p class="text-xs text-slate-500 mb-6">Impacto en el margen por ±20% de cambio en variables clave.</p>
+                        <div class="chart-container">
+                            <canvas id="sensitivityChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chart 2: Break-even Point -->
+                <div id="breakeven" class="bg-white rounded-3xl p-8 shadow-xl border border-slate-100">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                        <div>
+                            <h3 class="text-2xl font-bold text-slate-900">Análisis del Punto de Equilibrio</h3>
+                            <p class="text-sm text-slate-500">Visualización de ingresos vs. costos según el volumen de producción mensual.</p>
+                        </div>
+                        <div class="bg-emerald-50 text-emerald-700 px-4 py-2 rounded-xl border border-emerald-100">
+                            <span class="text-xs font-bold uppercase">Estado Actual:</span>
+                            <span class="font-black">Zona de Ganancia</span>
+                        </div>
+                    </div>
+                    <div class="chart-container" style="max-width: 100%; height: 400px; max-height: 450px;">
+                        <canvas id="breakevenChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Strategic Summary (Qualitative) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-sky-900 text-white p-8 rounded-3xl shadow-xl">
+                        <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                            <span>🛡️</span> Estrategia de Mitigación
+                        </h3>
+                        <ul class="space-y-4 text-sm text-sky-100">
+                            <li class="flex gap-3">
+                                <span class="text-sky-400">✔</span> 
+                                <strong>Cobertura (Hedging):</strong> Contratos a futuro para el aceite de palma ante volatilidad >15%.
+                            </li>
+                            <li class="flex gap-3">
+                                <span class="text-sky-400">✔</span> 
+                                <strong>Eficiencia Energética:</strong> La recuperación de calor en la purificación de glicerina reduce el OPEX en un 4%.
+                            </li>
+                            <li class="flex gap-3">
+                                <span class="text-sky-400">✔</span> 
+                                <strong>Subproductos:</strong> Optimizar la pureza del glicerol técnico (99%) añade un 12% extra al flujo de caja.
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bg-emerald-600 text-white p-8 rounded-3xl shadow-xl relative overflow-hidden">
+                        <h3 class="text-xl font-bold mb-4">Proyección Mensual</h3>
+                        <div class="space-y-2">
+                            <div class="flex justify-between border-b border-emerald-500 py-2">
+                                <span>Ingresos Totales</span>
+                                <span id="res-income" class="font-bold">$1,100,000</span>
+                            </div>
+                            <div class="flex justify-between border-b border-emerald-500 py-2">
+                                <span>Costos Operativos</span>
+                                <span id="res-opex" class="font-bold">$850,000</span>
+                            </div>
+                            <div class="flex justify-between py-2 text-xl font-black">
+                                <span>Utilidad Bruta</span>
+                                <span id="res-profit" class="text-emerald-200">$250,000</span>
+                            </div>
+                        </div>
+                        <div class="absolute -right-8 -top-8 text-9xl opacity-20">📈</div>
+                    </div>
+                </div>
+
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-500 py-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-sm">Diseñado por <strong>UVIGO - CheTE</strong> para DROVI.</p>
+            <p class="text-xs mt-2 uppercase tracking-widest">© 2025 Simulación de Sensibilidad Económica Sintesis de Metil Ésteres de Aceites Vegetales.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Data and State
+        const state = {
+            oilPrice: 0.75,     // $/kg
+            salePrice: 1.10,    // $/kg
+            energyPrice: 0.12,  // $/kWh
+            volume: 1000000,    // kg/mes (1,000 Ton)
+            fixedCosts: 120000, // $/mes (Personal, Alquiler, Seguros)
+            conversion: 0.98,    // Rendimiento aceite -> biodiesel
+            glyYield: 0.10,      // kg glicerina / kg aceite
+            glyPrice: 0.25       // $/kg
+        };
+
+        // Utility: Label Wrapping (16-char limit)
+        const wrapLabel = (label) => {
+            if (label.length <= 16) return label;
+            const words = label.split(' ');
+            const lines = [];
+            let currentLine = '';
+            words.forEach(word => {
+                if ((currentLine + word).length > 16) {
+                    lines.push(currentLine.trim());
+                    currentLine = word + ' ';
+                } else {
+                    currentLine += word + ' ';
+                }
+            });
+            lines.push(currentLine.trim());
+            return lines;
+        };
+
+        // Common Tooltip Config
+        const tooltipConfig = {
+            callbacks: {
+                title: function(tooltipItems) {
+                    const item = tooltipItems[0];
+                    let label = item.chart.data.labels[item.dataIndex];
+                    return Array.isArray(label) ? label.join(' ') : label;
+                }
+            }
+        };
+
+        // Charts Instances
+        let costChart, sensitivityChart, breakevenChart;
+
+        function calculateFinance() {
+            const oilCost = state.volume * state.oilPrice;
+            const methanolCost = state.volume * 0.15 * 0.40; // 15% ratio at 0.40 $/kg
+            const energyCost = state.volume * 0.8 * state.energyPrice; // 0.8 kWh/kg
+            const variableCosts = oilCost + methanolCost + energyCost;
+            const totalCosts = variableCosts + state.fixedCosts;
+
+            const biodieselIncome = state.volume * state.conversion * state.salePrice;
+            const glyIncome = state.volume * state.glyYield * state.glyPrice;
+            const totalIncome = biodieselIncome + glyIncome;
+
+            const profit = totalIncome - totalCosts;
+            const margin = (profit / totalIncome) * 100;
+
+            // Breakeven Volume (kg) = Fixed Costs / (Unit Price - Unit Variable Cost)
+            const unitRevenue = totalIncome / state.volume;
+            const unitVarCost = variableCosts / state.volume;
+            const beVolume = state.fixedCosts / (unitRevenue - unitVarCost);
+
+            return {
+                oilCost, methanolCost, energyCost, totalCosts, 
+                totalIncome, profit, margin, beVolume, unitRevenue, unitVarCost
+            };
+        }
+
+        function updateUI() {
+            const data = calculateFinance();
+            
+            // Labels
+            document.getElementById('label-oil').innerText = state.oilPrice.toFixed(2);
+            document.getElementById('label-sale').innerText = state.salePrice.toFixed(2);
+            document.getElementById('label-energy').innerText = state.energyPrice.toFixed(2);
+
+            // KPIs
+            document.getElementById('kpi-margin').innerText = data.margin.toFixed(1) + "%";
+            document.getElementById('kpi-breakeven').innerText = (data.beVolume / 1000).toFixed(0) + " T";
+            document.getElementById('kpi-unit-cost').innerText = "$" + data.unitVarCost.toFixed(2);
+            document.getElementById('kpi-roi').innerText = (data.margin * 0.8).toFixed(1) + "%"; // Mock ROI
+
+            // Bottom Results
+            const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+            document.getElementById('res-income').innerText = formatter.format(data.totalIncome);
+            document.getElementById('res-opex').innerText = formatter.format(data.totalCosts);
+            document.getElementById('res-profit').innerText = formatter.format(data.profit);
+
+            // Visual Flow
+            document.getElementById('flow-oil').style.width = (data.oilCost / data.totalCosts * 100) + "%";
+            document.getElementById('flow-energy').style.width = (data.energyCost / data.totalCosts * 100) + "%";
+
+            // Update Charts
+            updateCostChart(data);
+            updateSensitivityChart(data);
+            updateBreakevenChart(data);
+        }
+
+        function initCharts() {
+            // 1. Cost Chart (Donut)
+            const ctxCost = document.getElementById('costChart').getContext('2d');
+            costChart = new Chart(ctxCost, {
+                type: 'doughnut',
+                data: {
+                    labels: [wrapLabel('Aceite de Palma'), wrapLabel('Energía y Vapor'), wrapLabel('Costes Fijos'), wrapLabel('Metanol y Otros')],
+                    datasets: [{
+                        data: [75, 10, 8, 7],
+                        backgroundColor: ['#0ea5e9', '#f59e0b', '#1e293b', '#64748b'],
+                        borderWidth: 0,
+                        cutout: '70%'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { tooltip: tooltipConfig, legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } } }
+                }
+            });
+
+            // 2. Sensitivity Chart (Horizontal Bars)
+            const ctxSens = document.getElementById('sensitivityChart').getContext('2d');
+            sensitivityChart = new Chart(ctxSens, {
+                type: 'bar',
+                data: {
+                    labels: [wrapLabel('Precio Aceite'), wrapLabel('Precio Venta'), wrapLabel('Coste Energía')],
+                    datasets: [
+                        { label: '-20%', data: [5, -4, 2], backgroundColor: '#10b981' },
+                        { label: '+20%', data: [-5, 4, -2], backgroundColor: '#ef4444' }
+                    ]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { tooltip: tooltipConfig, legend: { display: false } },
+                    scales: { x: { title: { display: true, text: 'Δ Margen (%)' } } }
+                }
+            });
+
+            // 3. Breakeven Chart (Lines)
+            const ctxBE = document.getElementById('breakevenChart').getContext('2d');
+            breakevenChart = new Chart(ctxBE, {
+                type: 'line',
+                data: {
+                    labels: [0, 200, 400, 600, 800, 1000, 1200],
+                    datasets: [
+                        { label: wrapLabel('Ingresos Totales'), data: [], borderColor: '#10b981', fill: false, tension: 0.1 },
+                        { label: wrapLabel('Costes Operativos'), data: [], borderColor: '#ef4444', fill: false, tension: 0.1 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { tooltip: tooltipConfig, legend: { position: 'top' } },
+                    scales: {
+                        y: { title: { display: true, text: 'USD ($)' }, ticks: { callback: v => '$' + (v/1000) + 'k' } },
+                        x: { title: { display: true, text: 'Volumen Mensual (Ton)' } }
+                    }
+                }
+            });
+        }
+
+        function updateCostChart(data) {
+            costChart.data.datasets[0].data = [data.oilCost, data.energyCost, state.fixedCosts, data.methanolCost];
+            costChart.update();
+        }
+
+        function updateSensitivityChart(data) {
+            // Sensibilidad del margen ante cambios del 20%
+            const baseProfit = data.profit;
+            
+            // Impacto Aceite (Inverso)
+            const oilHigh = calculateFinanceWith({ oilPrice: state.oilPrice * 1.2 });
+            const oilLow = calculateFinanceWith({ oilPrice: state.oilPrice * 0.8 });
+            
+            // Impacto Venta (Directo)
+            const saleHigh = calculateFinanceWith({ salePrice: state.salePrice * 1.2 });
+            const saleLow = calculateFinanceWith({ salePrice: state.salePrice * 0.8 });
+
+            // Impacto Energía (Inverso)
+            const energyHigh = calculateFinanceWith({ energyPrice: state.energyPrice * 1.2 });
+            const energyLow = calculateFinanceWith({ energyPrice: state.energyPrice * 0.8 });
+
+            sensitivityChart.data.datasets[0].data = [
+                oilLow.margin - data.margin,
+                saleLow.margin - data.margin,
+                energyLow.margin - data.margin
+            ];
+            sensitivityChart.data.datasets[1].data = [
+                oilHigh.margin - data.margin,
+                saleHigh.margin - data.margin,
+                energyHigh.margin - data.margin
+            ];
+            sensitivityChart.update();
+        }
+
+        function updateBreakevenChart(data) {
+            const xValues = [0, 200, 400, 600, 800, 1000, 1200];
+            const incomes = xValues.map(v => v * 1000 * data.unitRevenue);
+            const costs = xValues.map(v => (v * 1000 * data.unitVarCost) + state.fixedCosts);
+            
+            breakevenChart.data.labels = xValues;
+            breakevenChart.data.datasets[0].data = incomes;
+            breakevenChart.data.datasets[1].data = costs;
+            breakevenChart.update();
+        }
+
+        function calculateFinanceWith(overrides) {
+            const tempState = { ...state, ...overrides };
+            const oilCost = tempState.volume * tempState.oilPrice;
+            const energyCost = tempState.volume * 0.8 * tempState.energyPrice;
+            const variableCosts = oilCost + (tempState.volume * 0.15 * 0.40) + energyCost;
+            const totalCosts = variableCosts + tempState.fixedCosts;
+            const totalIncome = (tempState.volume * tempState.conversion * tempState.salePrice) + (tempState.volume * tempState.glyYield * tempState.glyPrice);
+            const profit = totalIncome - totalCosts;
+            const margin = (profit / totalIncome) * 100;
+            return { profit, margin };
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            initCharts();
+            updateUI();
+
+            // Event Listeners
+            document.getElementById('input-oil').addEventListener('input', e => { state.oilPrice = parseFloat(e.target.value); updateUI(); });
+            document.getElementById('input-sale').addEventListener('input', e => { state.salePrice = parseFloat(e.target.value); updateUI(); });
+            document.getElementById('input-energy').addEventListener('input', e => { state.energyPrice = parseFloat(e.target.value); updateUI(); });
+        });
+    </script>
+
+    <!-- 
+        Summary Plan:
+        1. Context: Focus on the economic feasibility of the palm oil biodiesel plant.
+        2. Visual Strategy: Used Material Design with cards, elevation, and high-contrast charts.
+        3. Real-time Calculation: Finance engine linked to sliders to show "What-if" scenarios.
+        4. Charts: 
+           - Donut (Cost Structure)
+           - Tornado (Sensitivity)
+           - Line (Breakeven Analysis)
+        5. Justification: Economic sensitivity is vital for engineering because profit margins in biofuels are tight and highly dependent on raw material costs.
+    -->
+    <!-- CONFIRMATION: NEITHER Mermaid JS NOR SVG were used in this output. All graphics are Canvas or HTML/CSS. -->
+</body>
+</html>
