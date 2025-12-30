@@ -1,0 +1,41 @@
+---
+title: "Memoria Final de Investigación: Proxecto AGROSOLVENTS"
+author: "Anxo"
+university: "Universidade de Vigo"
+date: last-modified
+lang: gl
+format:
+  html:
+    toc: true
+  pdf:
+    toc: true
+    number-sections: true
+---
+
+# Introdución
+
+{{< include Informe_Final_de_Investigación_del_Proye.md >}}
+
+# Síntese de FAMEs (Ésteres Metílicos)
+
+Nesta sección analízase o proceso de síntese de metil palmitato e a súa simulación.
+
+{{< include md/fames.md >}}
+
+# Caracterización Física
+
+Os seguintes apartados resumen os modelos desenvolvidos en Python para a predición de propiedades.
+
+{{< include md/Predicion_propiedades_fisicas.md >}}
+
+# Sistemas de Microemulsións
+
+{{< include md/microemulsiones.md >}}
+
+# Reciclado e Sostibilidade
+
+{{< include reciclado.qmd >}}
+
+# Conclusións
+
+{{< include Informe_de_actividaduvigo_agrosolvents_esgructura.md >}}

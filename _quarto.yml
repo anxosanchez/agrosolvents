@@ -1,0 +1,39 @@
+project:
+  type: website
+  output-dir: _site
+
+website:
+  title: "Proxecto AGROSOLVENTS"
+  description: "Informe final de investigación - Universidade de Vigo"
+  navbar:
+    background: primary
+    left:
+      - href: memoria_final.qmd
+        text: Resumo Executivo
+      - text: "Seccións"
+        menu:
+          - href: md/fames.md
+            text: "Síntese de FAMEs"
+          - href: md/Predicion_propiedades_fisicas.md
+            text: "Propiedades Físicas"
+          - href: md/microemulsiones.md
+            text: "Microemulsións"
+          - href: reciclado.qmd
+            text: "Reciclado"
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    code-fold: true
+    number-sections: true
+  pdf:
+    documentclass: report
+    papersize: a4
+    number-sections: true
+    toc: true
+    colorlinks: true
+
+editor: visual
+
+
