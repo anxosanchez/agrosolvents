@@ -12,14 +12,8 @@ website:
         text: Resumo Executivo
       - text: "Seccións"
         menu:
-          - href: md/fames.md
-            text: "Síntese de FAMEs"
-          - href: md/Predicion_propiedades_fisicas.md
-            text: "Propiedades Físicas"
-          - href: md/microemulsiones.md
-            text: "Microemulsións"
-          - href: reciclado.qmd
-            text: "Reciclado"
+          - href: Informe_Final_Investigacion_Agrosolvents.md
+            text: "Introdución"
 
 format:
   html:
