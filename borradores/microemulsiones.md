@@ -115,47 +115,28 @@ Según las fuentes, los tensioactivos en el agua se autoensamblan en diferentes 
 
 
 
+```{python}
 
 import numpy as np
-
 import matplotlib.pyplot as plt
-
 \# ---------- Parámetros do exemplo ----------
-
 T \= 25.0 \# ºC
-
 sigma \= 0.01 \# 1/ºC (aniónico)
-
 k \= 0.17 \# coeficiente EACN
-
 Cc\_SDS \= \-2.6 \# constante de caracterización do SDS
-
 \# Aceites da mestura
-
 EACN\_octano \= 8
-
 EACN\_tetradecano \= 14
-
 \# Salinidade de referencia
-
 S\_ref \= 5.0 \# % peso NaCl
-
 \# ---------- Funcións ----------
-
 def HLD\_anionico(T, EACN, S, Cc\=Cc\_SDS, k\=k, sigma\=sigma, Tref\=25.0):
-
 """HLD para tensioactivos aniónicos.
-
 S en % peso (>= ~0.1 para evitar log(0)).
-
 """
-
 return sigma \* (T \- Tref) \- k \* EACN + np.log(S) + Cc
-
 def EACN\_mestura(x\_oct, E1\=EACN\_octano, E2\=EACN\_tetradecano):
-
 """EACN da mestura: x\_oct é a fracción (0..1) de octano."""
-
 return x\_oct \* E1 + (1 \- x\_oct) \* E2
 
 \# ---------- Cálculos base ----------
@@ -279,3 +260,5 @@ print('EACN\_mix\_5050 =', EACN\_mix\_5050)
 print('S\* (HLD=0) ≈', S\_star)
 
 print('Ficheiros xerados:', 'grafico\_1\_HLD\_vs\_S.png', 'grafico\_2\_HLD\_vs\_EACN.png', 'grafico\_3\_R\_vs\_S.png')
+
+```

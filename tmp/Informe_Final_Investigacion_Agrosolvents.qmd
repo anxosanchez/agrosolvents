@@ -219,7 +219,7 @@ En la predicción de las propiedades de ls dsolventes formlados, el equipo de nv
 [^31]: Hansen, C. M. (2007). Hansen solubility parameters: a user's handbook. CRC press.
 
 | Disolvente                  |   δd |  ​δp |  ​δh | ​Aplicación Sugerida              |
-|:-------------|-------------:|-------------:|-------------:|:------------------|
+|:--------------|--------------:|--------------:|--------------:|:--------------|
 | **Tolueno** (Petróleo)      | 18.0 | 1.4 | 2.0 | Referencia a sustituir           |
 | **Palmitato de Metilo**     | 16.5 | 3.5 | 4.2 | Desengrase y limpieza industrial |
 | **DBE** (Ésteres dibásicos) | 15.2 | 7.5 | 8.8 | Decapado de pinturas y resinas   |

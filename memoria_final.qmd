@@ -14,18 +14,14 @@ format:
 
 # Introdución
 
-{{< include 01_Documentacion/Informe_Final_Investigación_Agrosolvents.md >}}
-
 # Síntese de FAMEs (Ésteres Metílicos)
 
-Nesta sección analízase o proceso de síntese de metil palmitato e a súa simulación.
+Nesta sección analízase o proceso de síntese de metil palmitato e a súa simulación. 
 
-# Caracterización Física
+# Caracterización Física Os seguintes apartados resumen os modelos desenvolvidos en Python para a predición de propiedades. 
 
-Os seguintes apartados resumen os modelos desenvolvidos en Python para a predición de propiedades.
+# Sistemas de Microemulsións 
 
-# Sistemas de Microemulsións
-
-# Reciclado e Sostibilidade
+# Reciclado e Sostibilidade 
 
 # Conclusións
